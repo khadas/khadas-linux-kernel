@@ -1,0 +1,37 @@
+#!/bin/sh
+
+#= auto build example
+
+## hyphop ##
+
+set -e
+cd "$(dirname "$0")"
+. ./config.conf
+
+export LINUX_VER=linux-5.7
+export KERNEL_SOURCE_DIR="$KERNEL_SOURCE_DIR"
+
+./$kernel_prepare
+
+CHK=1 ./patch_ || {
+./patch_ ../patches/$LINUX_VER/*.patch 
+./patch_ ../patches/linux-krescue/*.patch
+LAST=1 ./patch_
+}
+
+./make_kernel_mainline_vimsX -n
+./kernel_config ../files/configs/mmc_m
+./kernel_config ../files/configs/eth2_y
+./kernel_config ../files/configs/usb_storage_m
+./kernel_config ../files/configs/small_size_y
+
+NOPOST=1 ./make_kernel_mainline_vimsX dtbs || echo "[w] ups...">&2
+
+[ "$TESTONLY" ] && {
+    echo "[i] OK testonly mode"
+    exit 0
+}
+
+./make_kernel_mainline_vimsX
+
+TAR=1 ./make_kernel_mainline_vimsX_modules

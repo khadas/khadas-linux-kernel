@@ -1,0 +1,139 @@
+#!/bin/sh
+
+## hyphop ##
+
+#= make kernel wrapper
+
+#/ USAGE $0 [ARGS]
+#/ args:
+#/ menuconfig
+#/ dtbs
+#/ -jN
+#/ savedefconfig
+#/ Image
+#/ help
+#/ ...
+
+set -e 
+
+D=$(dirname $0)
+N=$(basename $0)
+DR=$(realpath $D)
+
+. $D/config.conf
+
+[ -d $GCC_PATH ] || {
+    echo "[e] GCC_PATH: $GCC_PATH - not found">&2
+    exit 1
+}
+
+export PATH="$(realpath $GCC_PATH)/bin:$PATH"
+
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+export CROSS_COMPILE=aarch64-none-linux-gnu-
+
+DIR="$KERNEL_SOURCE_DIR"
+
+[ -d "$DIR" ] || {
+    echo "[e] source dir not found : $DIR">&2
+    exit 1
+}
+
+CMD(){
+    echo "[#] $@">&2
+    "$@"
+}
+
+# cross gcc test
+CMD ${CROSS_COMPILE}gcc --version  || {
+    echo "[e] cross gcc failed">&2
+    exit 1
+}
+
+DEF_CONFIG=kvims_defconfig
+
+[ -f "$DIR/.config" ] || {
+    echo "[i] config <= $DEF_CONFIG">&2
+    T2=$DIR/arch/$ARCH/configs/$DEF_CONFIG
+    CMD cp $DR/../configs/linux-mainline/defconfig $T2
+    CMD make -C "$DIR" $DEF_CONFIG
+}
+
+ALL=
+case "$1" in
+    -n*)
+    echo "[i] noop mode">&2
+    exit 0
+    ;;
+    -a*)
+    echo "[i] build all">&2
+    ALL=1
+    shift
+    ;;
+esac
+
+ARGS="$@"
+
+[ "$ARGS" ] || {
+    ARGS="-j$(nproc)"
+}
+
+CMD make -C "$DIR" $ARGS
+
+# post
+
+[ "$NOPOST" ] && exit 0
+
+T="$KERNEL_OUTPUT_DIR"
+
+[ -d "$T" ] || mkdir -p "$T"
+
+CMD gzip -c $DIR/.config > $T/config.gz
+
+f="$T/fdt/amlogic"
+[ -d "$f" ] || mkdir -p "$f"
+CMD cp $DIR/arch/arm64/boot/dts/amlogic/*vim*.dtb "$f"
+f="$T/fdt/rockchip"
+[ -d "$f" ] || mkdir -p $f
+CMD cp $DIR/arch/arm64/boot/dts/rockchip/*edge*.dtb "$f"
+
+CMD cp $DIR/arch/arm64/boot/Image "$T"
+
+#KERNEL_ADDR=0x01080000
+#KERNEL_ADDR=0x0f080000
+
+gz=$(which pigz 2>/dev/null)
+[ "$gz" ] || gz=gzip
+
+$gz  -9c $T/Image > $T/Image.gz
+
+mkimage=$(which mkimage 2>/dev/null)
+
+CMD $mkimage -A arm64 \
+    -O linux -C gzip -T kernel -a $KERNEL_ADDR -e $KERNEL_ADDR \
+    -n kernel -d "$T/Image.gz" "$T/uImage.gzip"
+
+lzma=$(which lzma 2>/dev/null)
+$lzma -T4 -e -9 --block-size=3M -c $T/Image > $T/Image.lzma
+
+CMD $mkimage -A arm64 \
+    -O linux -C lzma -T kernel -a $KERNEL_ADDR -e $KERNEL_ADDR \
+    -n kernel -d "$T/Image.lzma" "$T/uImage.lzma"
+
+[ "$ALL" ] && {
+    ${0}_modules
+}
+
+
+cd $T
+
+#DTBS=vims.dtb.tar.gz
+#[ -f "$DTBS" ] && rm $DTBS
+#tar -czf $DTBS *.dtb
+
+DTBS=fdt.tar.gz
+[ -f "$DTBS" ] && rm $DTBS
+tar -czf $DTBS fdt
+
+## OK BYBY

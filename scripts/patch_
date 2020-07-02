@@ -1,0 +1,42 @@
+#!/bin/sh
+
+## hyphop ##
+
+#= source patcher
+
+set -e 
+
+[ -d "$1" ] && {
+    DIR=$1
+    shift
+}
+
+[ "$DIR" ] || DIR="$KERNEL_SOURCE_DIR"
+
+[ "$DIR" ] || {
+    echo "[i] undef patch DIR">&2
+    exit 1
+}
+
+echo "[i] patch dir $DIR">&2
+
+exit 0
+
+[ "$CHK" ] && {
+
+[ -s $DIR/.patched ] && {
+    echo "[i] patched already $(cat "$DIR/.patched")">&2
+    exit 0
+}
+    exit 1
+
+}
+
+for p in $@; do
+    echo "[i] patch $p">&2
+    patch -d $DIR -p1 < $p
+done
+
+[ "$LAST" ] && echo $(date) > $DIR/.patched
+
+exit 0

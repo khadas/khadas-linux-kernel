@@ -1,0 +1,117 @@
+#!/bin/sh
+
+## hyphop ##
+
+#= download kernel source + tc
+
+#set -e
+
+D=$(dirname $0)
+N=$(basename $0)
+DR=$(realpath $D)
+
+. "$DR/config.conf"
+
+TO="$D/$TO2"
+
+uid=$(id -u)
+gid=$(id -g)
+
+CMD(){
+    echo "">&2
+    $@
+}
+
+DL(){
+
+    echo "[i] download $DOWNLOAD_BASE$1 $2">&2
+
+    [ -f "$2" ] && {
+	[ -f "$2.md5sum" ] && {
+	    md5=$(md5sum "$2")
+	    md5=${md5% *}
+	    grep "$md5" "$2.md5sum" 2>/dev/null 1>/dev/null && {
+		echo "[i] downloaded already">&2
+		return 0
+	    }
+	    echo "[w] md5 $md5 wrong">&2
+	}
+    }
+
+    curl -jkL "$DOWNLOAD_BASE$1" -o "$2" -C- && {
+	echo "[i] gen md5 for $2">&2
+	md5sum "$2" > "$2.md5sum"
+    }
+
+}
+
+flex=$(which flex 2>/dev/null)
+
+[ "$flex" ] || {
+    echo "[i] flex not found , need to install flex"
+    echo "	sudo apt-get install flex"
+    exit 1
+}
+
+#exit 0
+
+for LINK in $GCC_SRC; do
+
+FILE=$(basename $LINK)
+FILE_D=${FILE%.tar.*}
+
+T="$(realpath "$GCC_PATH")"
+
+[ -d "$TO$FILE_D" ] || \
+mkdir -p "$TO$FILE_D"
+
+[ -e "$TO$FILE_D/.extracted" ] || {
+
+DL "$LINK" "$TO$FILE"
+
+echo "extract to tc $TO$FILE_D ...">&2
+
+tar -xf "$TO$FILE" -C "$TO$FILE_D" --strip-components=1 && {
+
+echo $(date) > "$TO$FILE_D/.extracted"
+
+ln -sf "$(realpath $TO$FILE_D)" $GCC_PATH
+
+}
+
+}
+
+done
+
+
+DOWNLOAD_BASE=
+
+for LINK in $LINUX_SRC_ ; do
+
+FILE=$(basename $LINK)
+
+#T="$(realpath "$KERNEL_PATH2/$FILE")"
+#T="${T%.tar.*}"
+
+T="$KERNEL_SOURCE_DIR"
+
+[ -d "$T" ] || mkdir -p "$T"
+
+[ -f "$T/README" ] &&  {
+    echo "[i] kernel already prepared">&2
+    exit 0
+
+}
+
+DL "$LINK" "$TO$FILE"
+
+echo "[i] $FILE">&2
+
+echo "extract kernel to $T ...">&2
+
+tar -xf "$TO$FILE" -C "$T" --strip-components=1 || exit 1
+
+echo "OK ready">&2
+
+done
+
