@@ -65,14 +65,12 @@ preparing ... plz wait soon ...
 
 ## related projects
 
-+ https://github.com/krescue/khadas-uboot
 + https://github.com/krescue/khadas-rescue
-+ https://github.com/krescue/khadas-openwrt
++ https://github.com/krescue/khadas-rescue-sdk
++ https://github.com/krescue/khadas-rescue-rootfs
++ https://github.com/krescue/khadas-openwrt-feed-extra
++ https://github.com/krescue/khadas-openwrt-sdk
++ https://github.com/krescue/khadas-linux-kernel
++ https://github.com/krescue/khadas-uboot
 
-## links
-
-+ https://docs.khadas.com
-+ https://github.com/khadas
-+ https://github.com/krescue
-
-## hyphop ##
+    \## hyphop ##
