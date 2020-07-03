@@ -20,8 +20,6 @@ set -e
 
 echo "[i] patch dir $DIR">&2
 
-exit 0
-
 [ "$CHK" ] && {
 
 [ -s $DIR/.patched ] && {
