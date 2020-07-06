@@ -8,7 +8,7 @@ https://github.com/krescue/khadas-linux-kernel
 
 ## Features
 
-+ kernel version is 5.7
++ kernel version is 5.7.7 + patches
 + one kernel for amlogic and rockchip
 + mainline 
 + small kernel size
@@ -65,7 +65,7 @@ preparing ... plz wait soon ...
 
 ## related projects
 
-+ https://github.com/krescue/khadas-rescue
++ https://github.com/krescue/krescue
 + https://github.com/krescue/khadas-rescue-sdk
 + https://github.com/krescue/khadas-rescue-rootfs
 + https://github.com/krescue/khadas-openwrt-feed-extra
