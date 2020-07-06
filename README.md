@@ -73,4 +73,4 @@ preparing ... plz wait soon ...
 + https://github.com/krescue/khadas-linux-kernel
 + https://github.com/krescue/khadas-uboot
 
-    \## hyphop ##
+\## hyphop ##
