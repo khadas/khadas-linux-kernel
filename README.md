@@ -28,7 +28,7 @@ https://github.com/krescue/khadas-linux-kernel
     cd khadas-linux-kernel
 
 ## auto build script for releases
-
+    ./scripts/prepare || echo "not possible to continue"
     ./scripts/auto_krescue
     ./scripts/auto_openwrt
 
