@@ -1,0 +1,45 @@
+From 46870c39984a7ab38e1fe24f8d52e9ae25d9e381 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Thu, 24 Sep 2020 16:06:33 +0800
+Subject: [PATCH 3/8] arm64: dts: meson: update leds node on Khadas VIM3/VIM3L
+ board meson-khadas-vim3
+
+add aliases names led_white and led_red for white and red leds
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+index 73783692e30..7e137399257 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+@@ -12,6 +12,8 @@ / {
+ 	aliases {
+ 		serial0 = &uart_AO;
+ 		ethernet0 = &ethmac;
++		led_red = &led_red;
++		led_white = &led_white;
+ 	};
+ 
+ 	chosen {
+@@ -39,13 +41,13 @@ button-function {
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+-		led-white {
++		led_white: led-white {
+ 			label = "vim3:white:sys";
+ 			gpios = <&gpio_ao GPIOAO_4 GPIO_ACTIVE_HIGH>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 
+-		led-red {
++		led_red: led-red {
+ 			label = "vim3:red";
+ 			gpios = <&gpio_expander 5 GPIO_ACTIVE_HIGH>;
+ 		};
+-- 
+2.25.1
+
