@@ -37,8 +37,15 @@ https://github.com/krescue/khadas-linux-kernel
     ./make_kernel_mainline_vimsX
     ./make_kernel_mainline_vimsX_modules
 
+    # we can define kernel version
+    export LINUX_VER=linux-5.7.7
+    ./make_kernel_mainline_vimsX
+
+    # build modules archive
+    TAR=1 ./make_kernel_mainline_vimsX_modules
+
 # config file
-    
+
     ./scripts/config.conf
 
 # OUTPUT
