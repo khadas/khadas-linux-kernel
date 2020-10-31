@@ -1,0 +1,24 @@
+From 1c50ff6963238e818c43b93504b4f2ee22366d3d Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Sat, 31 Oct 2020 12:54:58 +0800
+Subject: [PATCH] AUDIO add Xduoo audio link usb id to DSD support quirks
+
+---
+ sound/usb/quirks.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index d41af8aea..cc8617a59 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1761,6 +1761,7 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	case 0x22d9:  /* Oppo */
+ 	case 0x23ba:  /* Playback Designs */
+ 	case 0x25ce:  /* Mytek devices */
++	case 0x262a:  /* Xduoo audio link */
+ 	case 0x278b:  /* Rotel? */
+ 	case 0x292b:  /* Gustard/Ess based devices */
+ 	case 0x2ab6:  /* T+A devices */
+-- 
+2.25.1
+

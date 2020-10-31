@@ -1,0 +1,24 @@
+From 3f4cc3c6b34e4d22867ec45834ae90cc807c5e11 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Sat, 31 Oct 2020 12:33:31 +0800
+Subject: [PATCH] AUDIO add Khadas Tone2 usb id to DSD support quirks
+
+---
+ sound/usb/quirks.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index d7d900ebc..d41af8aea 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1764,6 +1764,7 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	case 0x278b:  /* Rotel? */
+ 	case 0x292b:  /* Gustard/Ess based devices */
+ 	case 0x2ab6:  /* T+A devices */
++	case 0x3353:  /* Khadas Tone2 */
+ 	case 0x3842:  /* EVGA */
+ 	case 0xc502:  /* HiBy devices */
+ 		if (fp->dsd_raw)
+-- 
+2.25.1
+
