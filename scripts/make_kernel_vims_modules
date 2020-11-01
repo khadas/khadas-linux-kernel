@@ -4,7 +4,9 @@
 
 #= make install modules
 
-. $(dirname "$0")/config.conf
+
+D=$(realpath "$(dirname "$0")") # "
+. $D/config.conf
 
 export INSTALL_MOD_PATH=$KERNEL_OUTPUT_DIR
 export INSTALL_MOD_STRIP=1 
@@ -15,6 +17,8 @@ CMD(){
     echo "[#] $@">&2
     "$@"
 }
+
+[ "" ]&&{
 
 #CMD 
 rm -rd $INSTALL_MOD_PATH/lib/modules 2>/dev/null
@@ -61,12 +65,17 @@ cd $PWD
 
 cd $INSTALL_MOD_PATH
 
+}
 #tar -cJf modules.openwrt.tar.xz lib
 
-[ $TAR ] && \
+
+[ "$TAR" ] && \
 CMD tar -czf modules.openwrt.tar.gz lib
 
-cd $PWD
+#[ "$IPK" ] && {
+#$D/make_kernel_opkgs
+#}
 
+cd $PWD
 ls -l1 *.gz
 

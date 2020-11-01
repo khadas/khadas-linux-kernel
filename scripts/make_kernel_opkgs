@@ -4,7 +4,8 @@
 
 #= make install modules
 
-D=$(realpath "$(dirname "$0")")
+D=$(realpath "$(dirname "$0")") # "
+
 
 . "$D"/config.conf
 
@@ -66,8 +67,13 @@ while read l ; do
     }
     list="$list $i"
     n=${M#/}/${i//_/?}.ko
+    #n=${M}/${i//_/?}.ko
     r=$(ls -1 $n)
-    files="$files $r"
+    [ "$r" ] || {
+	echo "[i] $n missed">&2
+#	exit 1
+    }
+    files="$files ${r#/}"
     done
     k="kernel-modules-$name"
     echo "[i] $name -> $k"
