@@ -18,7 +18,7 @@ CMD(){
     "$@"
 }
 
-[ "" ]&&{
+#[ "" ]&&{
 
 #CMD 
 rm -rd $INSTALL_MOD_PATH/lib/modules 2>/dev/null
@@ -65,9 +65,9 @@ cd $PWD
 
 cd $INSTALL_MOD_PATH
 
-}
-#tar -cJf modules.openwrt.tar.xz lib
+#}
 
+#tar -cJf modules.openwrt.tar.xz lib
 
 [ "$TAR" ] && \
 CMD tar -czf modules.openwrt.tar.gz lib
@@ -78,4 +78,3 @@ CMD tar -czf modules.openwrt.tar.gz lib
 
 cd $PWD
 ls -l1 *.gz
-
