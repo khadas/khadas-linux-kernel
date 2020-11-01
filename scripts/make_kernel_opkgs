@@ -86,8 +86,6 @@ while read l ; do
     tar -C$T -cf- control.tar.gz data.tar.gz debian-binary | $gzip \
       > $KERNEL_OUTPUT_DIR/$k.ipk
 
-    scp $KERNEL_OUTPUT_DIR/$k.ipk root@vimu:/tmp
-
 done \
 < $D/subparts.conf
 
