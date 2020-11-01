@@ -1,0 +1,93 @@
+#!/bin/bash
+
+## hyphop ##
+
+#= make install modules
+
+D=$(realpath "$(dirname "$0")")
+
+. "$D"/config.conf
+
+echo "[i] mask opks  $KERNEL_OUTPUT_DIR"
+
+CMD(){
+    echo "[#] $@">&2
+    "$@"
+}
+
+cd $KERNEL_OUTPUT_DIR
+
+M=$INSTALL_MOD_PATH/lib/modules/0.0.0
+
+control(){
+
+echo "Package: $1
+Version: 0.0.0
+License: GPL-2.0
+Section: kernel
+Architecture: aarch64_generic
+Description:  kernel modules package
+"
+}
+postinst(){
+echo '#!/bin/sh
+[ "${IPKG_NO_SCRIPT}" = "1" ] && exit 0
+[ -x ${IPKG_INSTROOT}/lib/functions.sh ] || exit 0
+. ${IPKG_INSTROOT}/lib/functions.sh
+default_postinst $0 $@
+'
+}
+
+prerm(){
+echo '#!/bin/sh
+[ -x ${IPKG_INSTROOT}/lib/functions.sh ] || exit 0
+. ${IPKG_INSTROOT}/lib/functions.sh
+default_prerm $0 $@
+'
+}
+
+gzip=pigz
+
+T=/tmp/kmod-opkg
+
+while read l ; do
+    case $l in
+	\#*|"")
+	continue
+	;;
+    esac
+    name=
+    list=
+    files=
+    for i in $l; do
+    [ "$name" ] || {
+    name=$i
+    continue
+    }
+    list="$list $i"
+    n=${M#/}/${i//_/?}.ko
+    r=$(ls -1 $n)
+    files="$files $r"
+    done
+    k="kernel-modules-$name"
+    echo "[i] $name -> $k"
+    echo $list
+    echo $files
+    rm -rf $T
+    mkdir -p $T
+    control $k > $T/control
+    postinst "" > $T/postinst
+    prerm "" > $T/prerm
+    chmod 0777 $T/p*
+    tar -C$T -czf $T/control.tar.gz control postinst prerm
+    rm $T/control $T/postinst $T/prerm
+    tar -cf- $files | $gzip -9 > $T/data.tar.gz
+    echo 2.0 > $T/debian-binary
+    tar -C$T -cf- control.tar.gz data.tar.gz debian-binary | $gzip \
+      > $KERNEL_OUTPUT_DIR/$k.ipk
+
+    scp $KERNEL_OUTPUT_DIR/$k.ipk root@vimu:/tmp
+
+done \
+< $D/subparts.conf
+
