@@ -9,7 +9,7 @@ D=$(realpath "$(dirname "$0")") # "
 
 . "$D"/config.conf
 
-echo "[i] mask opks  $KERNEL_OUTPUT_DIR"
+echo "[i] make opkgs : $KERNEL_OUTPUT_DIR"
 
 CMD(){
     echo "[#] $@">&2
