@@ -1,10 +1,14 @@
+# Khadas linux kernel [![Build Status](https://github.com/khadas/khadas-linux-kernel/workflows/Build/badge.svg)](https://github.com/khadas/khadas-linux-kernel/actions)
+
+<!--
 [![Build Status](https://travis-ci.org/krescue/khadas-linux-kernel.svg?branch=master)](https://travis-ci.org/krescue/khadas-linux-kernel)
+-->
 
 # khadas linux kernel
 
 mainline linux kernel for usage on Khadas VIMs and Edge boards 
 
-https://github.com/krescue/khadas-linux-kernel
+https://github.com/khadas/khadas-linux-kernel
 
 ## Features
 
@@ -20,11 +24,11 @@ https://github.com/krescue/khadas-linux-kernel
 
 ## Download releases
 
-    + https://github.com/krescue/khadas-linux-kernel/releases/tag/amlrock
+    + https://github.com/khadas/khadas-linux-kernel/releases/tag/amlrock
 
 ## download
 
-    git clone https://github.com/krescue/khadas-linux-kernel
+    git clone https://github.com/khadas/khadas-linux-kernel
     cd khadas-linux-kernel
 
 ## auto build script for releases
@@ -68,16 +72,16 @@ preparing ... plz wait soon ...
 
 ## Downloads
 
-+ https://github.com/krescue/khadas-linux-kernel/releases
++ https://github.com/khadas/khadas-linux-kernel/releases
 
 ## related projects
 
-+ https://github.com/krescue/krescue
-+ https://github.com/krescue/khadas-rescue-sdk
-+ https://github.com/krescue/khadas-rescue-rootfs
-+ https://github.com/krescue/khadas-openwrt-feed-extra
-+ https://github.com/krescue/khadas-openwrt-sdk
-+ https://github.com/krescue/khadas-linux-kernel
-+ https://github.com/krescue/khadas-uboot
++ https://github.com/khadas/krescue
++ https://github.com/khadas/khadas-rescue-sdk
++ https://github.com/khadas/khadas-rescue-rootfs
++ https://github.com/khadas/khadas-openwrt-feed-extra
++ https://github.com/khadas/khadas-openwrt-sdk
++ https://github.com/khadas/khadas-linux-kernel
++ https://github.com/khadas/khadas-uboot
 
 \## hyphop ##
