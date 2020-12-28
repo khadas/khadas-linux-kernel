@@ -4,8 +4,6 @@
 [![Build Status](https://travis-ci.org/krescue/khadas-linux-kernel.svg?branch=master)](https://travis-ci.org/krescue/khadas-linux-kernel)
 -->
 
-# khadas linux kernel
-
 mainline linux kernel for usage on Khadas VIMs and Edge boards 
 
 https://github.com/khadas/khadas-linux-kernel
