@@ -1,0 +1,25 @@
+From 033f9f052deeeec6b749d446e7b38eae0325228c Mon Sep 17 00:00:00 2001
+From: Zhang Ning <832666+zhangn1985@users.noreply.github.com>
+Date: Mon, 27 Jul 2020 12:50:19 +0800
+Subject: [PATCH] asoc: meson: doesn't support capture
+
+Signed-off-by: Zhang Ning <832666+zhangn1985@users.noreply.github.com>
+---
+ sound/soc/meson/meson-card-utils.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/meson/meson-card-utils.c b/sound/soc/meson/meson-card-utils.c
+index 5a4a91c88734..3c3e470d1b4d 100644
+--- a/sound/soc/meson/meson-card-utils.c
++++ b/sound/soc/meson/meson-card-utils.c
+@@ -149,7 +149,6 @@ int meson_card_set_be_link(struct snd_soc_card *card,
+ 
+ 	link->no_pcm = 1;
+ 	link->dpcm_playback = 1;
+-	link->dpcm_capture = 1;
+ 
+ 	num_codecs = of_get_child_count(node);
+ 	if (!num_codecs) {
+-- 
+2.27.0
+
