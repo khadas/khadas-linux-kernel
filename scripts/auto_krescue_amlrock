@@ -37,5 +37,7 @@ NOPOST=1 ./make_kernel_mainline_vimsX dtbs || echo "[w] ups...">&2
 
 ./make_kernel_mainline_vimsX
 
+[ "$NOMOD" ] || {
 TAR=1 IPK=1 ./make_kernel_mainline_vimsX_modules
 ./make_kernel_opkgs
+}
