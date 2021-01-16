@@ -88,6 +88,14 @@ while read l ; do
     tar -C$T -czf $T/control.tar.gz control postinst prerm
     rm $T/control $T/postinst $T/prerm
     tar -cf- $files | $gzip -9 > $T/data.tar.gz
+
+    echo "# MODULES BEGIN"
+    for f in $files; do
+	f=${f##*/}
+	echo "${f%.ko}"
+    done
+    echo "# MODULES END"
+
     echo 2.0 > $T/debian-binary
     tar -C$T -cf- control.tar.gz data.tar.gz debian-binary | $gzip \
       > $KERNEL_OUTPUT_DIR/$k.ipk
