@@ -56,7 +56,13 @@ DEF_CONFIG=kvims_defconfig
 [ -f "$DIR/.config" ] || {
     echo "[i] config <= $DEF_CONFIG">&2
     T2=$DIR/arch/$ARCH/configs/$DEF_CONFIG
-    CMD cp $DR/../configs/linux-mainline/defconfig $T2
+    truncate -s0 $T2
+    #CMD cp $DR/../configs/linux-mainline/defconfig $T2
+    for c in $DR/../configs/linux-mainline/defconfig_*; do
+	[ -s $c ] || continue
+	echo "[i] add defconfig ${c##*/}"
+        cat "$c" >> $T2
+    done
     CMD make -C "$DIR" $DEF_CONFIG
 }
 
