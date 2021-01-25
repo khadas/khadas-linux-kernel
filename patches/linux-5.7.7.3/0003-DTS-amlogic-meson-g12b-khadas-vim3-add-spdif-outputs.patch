@@ -1,0 +1,25 @@
+From 7258407c860f85319b879cd89edc10bd439d8887 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 25 Jan 2021 19:34:58 +0800
+Subject: [PATCH 3/3] DTS: amlogic: meson-g12b-khadas-vim3 add spdif outputs
+
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+index 359c27014..cc31ad6d0 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+@@ -5,7 +5,7 @@
+  * Copyright (c) 2019 Christian Hewitt <christianshewitt@gmail.com>
+  */
+ 
+-#include "meson-g12-audio-hdmi.dtsi"
++#include "meson-g12-audio-hdmi-spdif.dtsi"
+ 
+ / {
+ 	model = "Khadas VIM3";
+-- 
+2.25.1
+

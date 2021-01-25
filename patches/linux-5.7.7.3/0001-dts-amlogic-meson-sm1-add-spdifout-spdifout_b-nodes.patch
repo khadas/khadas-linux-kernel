@@ -1,0 +1,56 @@
+From 5fc695203417bcc1543a3c485982202a021dc9b5 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 25 Jan 2021 19:28:38 +0800
+Subject: [PATCH] dts: amlogic: meson-sm1 add spdifout spdifout_b nodes
+
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 71317f5aa..72ebe945a 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -356,6 +356,19 @@ tdmin_lb: audio-controller@3c0 {
+ 			status = "disabled";
+ 		};
+ 
++		spdifout: audio-controller@480 {
++			compatible = "amlogic,g12a-spdifout",
++			"amlogic,axg-spdifout";
++			reg = <0x0 0x480 0x0 0x50>;
++			#sound-dai-cells = <0>;
++			sound-name-prefix = "SPDIFOUT";
++			clocks = <&clkc_audio AUD_CLKID_SPDIFOUT>,
++				 <&clkc_audio AUD_CLKID_SPDIFOUT_CLK>;
++			clock-names = "pclk", "mclk";
++			resets = <&clkc_audio AUD_RESET_SPDIFOUT>;
++			status = "disabled";
++		};
++
+ 		tdmout_a: audio-controller@500 {
+ 			compatible = "amlogic,sm1-tdmout";
+ 			reg = <0x0 0x500 0x0 0x40>;
+@@ -401,6 +414,19 @@ tdmout_c: audio-controller@580 {
+ 			status = "disabled";
+ 		};
+ 
++		spdifout_b: audio-controller@680 {
++			compatible = "amlogic,g12a-spdifout",
++			"amlogic,axg-spdifout";
++			reg = <0x0 0x680 0x0 0x50>;
++			#sound-dai-cells = <0>;
++			sound-name-prefix = "SPDIFOUT_B";
++			clocks = <&clkc_audio AUD_CLKID_SPDIFOUT_B>,
++			<&clkc_audio AUD_CLKID_SPDIFOUT_B_CLK>;
++			clock-names = "pclk", "mclk";
++			resets = <&clkc_audio AUD_RESET_SPDIFOUT_B>;
++			status = "disabled";
++		};
++
+ 		tohdmitx: audio-controller@744 {
+ 			compatible = "amlogic,sm1-tohdmitx",
+ 				     "amlogic,g12a-tohdmitx";
+-- 
+2.25.1
+

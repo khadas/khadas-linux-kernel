@@ -1,0 +1,96 @@
+From 70de0f71b36644e2b306505c87e818c47c5de73f Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 25 Jan 2021 11:34:25 +0800
+Subject: [PATCH] add kernel reboot option P for ingnore kernel restart prepare
+
+PROBLEM: amlogic VIM3 VIM3L reboot call freezed periodicaly about 1/10 times.
+( i think its common problem for amlogic S905D3 A311D soc )
+User start reboot system process but kernel didnt reach last psci_sys_reset 
+and stacked before ! problem inside kernel_restart_prepare sub
+
+TEMP SOLUTION:
+disable kernel restart prepare stage via add reboot=P to kernel cmd line
+
+EXAMPLE of stucked reboot #$  reboot -fn
+[   28.987453] reboot: kernel restart prapare CMD:(null)
+... system was Freezed ...
+
+EXAMPLE next success reboot #$ reboot -fn
+[   25.997460] reboot: kernel restart prapare CMD:(null)
+[   26.041942] reboot: Restarting system
+[   26.055425] psci: PSCI_0_2_FN_SYSTEM_RESET reboot_mode:0 cmd:(null)
+bl31 reboot reason: 0xd
+bl31 reboot reason: 0x0
+system cmd  1.
+... system was rebooted ...
+
+
+EXAMPLE of stable reboot with reboot=P #$ reboot -fn
+[   25.196817] reboot: kernel restart prapare CMD:(null)
+[   25.210742] reboot: kernel restart prapare was ignored
+[   25.224803] reboot: Restarting system
+[   25.238705] SMP: stopping secondary CPUs
+[   25.252353] psci: PSCI_0_2_FN_SYSTEM_RESET reboot_mode:0 cmd:(null)
+bl31 reboot reason: 0xd
+bl31 reboot reason: 0x0
+system cmd  1.
+... system was restarted ...
+SM1:BL:511f6b:81ca2f;FEAT:A0F83180:20282000;POC:F;RCY:0;EMMC:0;READ:0;0.0;CHK:0;
+bl2_stage_init 0x01
+bl2_stage_init 0x81
+
+Need to clarify problem!
+sure kernel_restart_prepare is not real problem, but problem come inside this sub
+need next more detailed exploration...
+
+ADDITION
+We can get same result without this patch via sysrq emergency reboot
+
+echo "sysrq emergency reboot"
+echo 1 > /proc/sys/kernel/sysrq
+echo b > /proc/sysrq-trigger
+
+---
+ kernel/reboot.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index c4d472b7f..cb6bfebf3 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -45,6 +45,7 @@ int reboot_default = 1;
+ int reboot_cpu;
+ enum reboot_type reboot_type = BOOT_ACPI;
+ int reboot_force;
++int reboot_kernel_restart_prepare_disabled;
+ 
+ /*
+  * If set, this is used for preparing the system to power off.
+@@ -70,6 +71,12 @@ EXPORT_SYMBOL_GPL(emergency_restart);
+ 
+ void kernel_restart_prepare(char *cmd)
+ {
++	pr_info("kernel restart prapare CMD:%s\n", cmd);
++	if ( reboot_kernel_restart_prepare_disabled ) {
++		pr_info("kernel restart prapare was ignored\n");
++		return;
++	}
++
+ 	blocking_notifier_call_chain(&reboot_notifier_list, SYS_RESTART, cmd);
+ 	system_state = SYSTEM_RESTART;
+ 	usermodehelper_disable();
+@@ -538,6 +545,11 @@ static int __init reboot_setup(char *str)
+ 		}
+ 
+ 		switch (*str) {
++		case 'P':
++			pr_info("kernel restart prapare was disabled\n");
++			reboot_kernel_restart_prepare_disabled = 1;
++			break;
++
+ 		case 'w':
+ 			*mode = REBOOT_WARM;
+ 			break;
+-- 
+2.25.1
+
