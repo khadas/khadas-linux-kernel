@@ -65,7 +65,9 @@ while read l ; do
     name=$i
     continue
     }
-    list="$list $i"
+
+    list="$list
+$i"
     n=${M#/}/${i//_/?}.ko
     #n=${M}/${i//_/?}.ko
     r=$(ls -1 $n)
@@ -73,12 +75,19 @@ while read l ; do
 	echo "[i] $n missed">&2
 #	exit 1
     }
-    files="$files ${r#/}"
+    files="$files
+${r#/}"
     done
+
+    list=$(echo "$list" | sort -u)
+    files=$(echo "$files" | sort -u)
+
     k="kernel-modules-$name"
     echo "[i] $name -> $k"
     echo $list
     echo $files
+#   continue
+
     rm -rf $T
     mkdir -p $T
     control $k > $T/control
