@@ -16,7 +16,7 @@ index 359c27014..cc31ad6d0 100644
   */
  
 -#include "meson-g12-audio-hdmi.dtsi"
-+#include "meson-g12-audio-hdmi-spdif.dtsi"
++#include "meson-vim3-audio-hdmi.dtsi"
  
  / {
  	model = "Khadas VIM3";

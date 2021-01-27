@@ -1,0 +1,97 @@
+From d770077a297c4c3ce1f6d8a485d8ee309b6a8e59 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Wed, 27 Jan 2021 15:01:26 +0800
+Subject: [PATCH] add simple vim3x audio config hdmi
+
+---
+ .../amlogic/meson-vim3-audio-hdmi-spdif.dtsi  | 78 +++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-vim3-audio-hdmi.dtsi
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-vim3-audio-hdmi.dtsi b/arch/arm64/boot/dts/amlogic/meson-vim3-audio-hdmi.dtsi
+new file mode 100644
+index 000000000..dee72a26e
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-vim3-audio-hdmi.dtsi
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2019 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ * Copyright (c) 2019 Christian Hewitt <christianshewitt@gmail.com>
++ */
++
++#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
++
++/ {
++	sound {
++		compatible = "amlogic,axg-sound-card";
++		model = "G12-HDMI";
++		audio-aux-devs = <&tdmout_b>;
++		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
++				"TDM_B Playback", "TDMOUT_B OUT";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&frddr_a>;
++		};
++
++		/* 8ch hdmi interface */
++		dai-link-3 {
++			sound-dai = <&tdmif_b>;
++			dai-format = "i2s";
++			dai-tdm-slot-tx-mask-0 = <1 1>;
++			dai-tdm-slot-tx-mask-1 = <1 1>;
++			dai-tdm-slot-tx-mask-2 = <1 1>;
++			dai-tdm-slot-tx-mask-3 = <1 1>;
++			mclk-fs = <256>;
++
++			codec {
++				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
++			};
++		};
++
++		dai-link-4 {
++			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++};
++
++&arb {
++	status = "okay";
++};
++
++&clkc_audio {
++	status = "okay";
++};
++
++&frddr_a {
++	status = "okay";
++};
++
++&tdmif_b {
++	status = "okay";
++};
++
++&tdmout_b {
++	status = "okay";
++};
++
++&tohdmitx {
++	status = "okay";
++};
+-- 
+2.25.1
+
