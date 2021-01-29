@@ -18,6 +18,11 @@ CMD(){
     "$@"
 }
 
+MD5(){
+    truncate -s0 "$1".md5sum
+    md5sum "$1" > "$1".md5sum
+}
+
 #[ "" ]&&{
 
 #CMD 
@@ -31,8 +36,10 @@ P=$PWD
 
 #tar -cJf modules.tar.xz lib
 
-[ $TAR ] && \
+[ $TAR ] && {
 CMD tar -czf modules.tar.gz lib
+MD5 modules.tar.gz
+}
 
 cd $PWD
 
@@ -69,8 +76,10 @@ cd $INSTALL_MOD_PATH
 
 #tar -cJf modules.openwrt.tar.xz lib
 
-[ "$TAR" ] && \
+[ "$TAR" ] && {
 CMD tar -czf modules.openwrt.tar.gz lib
+MD5 modules.openwrt.tar.gz
+}
 
 #[ "$IPK" ] && {
 #$D/make_kernel_opkgs
