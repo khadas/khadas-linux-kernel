@@ -38,7 +38,9 @@ DL(){
 	}
     }
 
-    curl -jkL "$DOWNLOAD_BASE$1" -o "$2" -C- && {
+    echo "curl -jfkL "$DOWNLOAD_BASE$1" -o "$2" -C-"
+
+    curl -jfkL "$DOWNLOAD_BASE$1" -o "$2" -C- && {
 	echo "[i] gen md5 for $2">&2
 	md5sum "$2" > "$2.md5sum"
     }
@@ -109,7 +111,12 @@ echo "[i] $FILE">&2
 
 echo "extract kernel to $T ...">&2
 
-tar -xf "$TO$FILE" -C "$T" --strip-components=1 || exit 1
+#tar -xf "$TO$FILE" -C "$T" --strip-components=1 || exit 1
+case "$FILE" in
+    *.gz)
+    pigz -dc "$TO$FILE" | tar -xf- -C "$T" --strip-components=1 || exit 1
+    ;;
+esac
 
 echo "OK ready">&2
 
