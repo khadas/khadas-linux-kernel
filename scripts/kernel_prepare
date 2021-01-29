@@ -37,8 +37,8 @@ DL(){
 	    echo "[w] md5 $md5 wrong">&2
 	}
     }
-
-    curl -jkL "$DOWNLOAD_BASE$1" -o "$2" -C- -# && {
+    
+    curl -jfkL "$DOWNLOAD_BASE$1" -o "$2" -C- -# && {
 	echo "[i] gen md5 for $2">&2
 	md5sum "$2" > "$2.md5sum"
     }
