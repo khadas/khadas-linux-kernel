@@ -89,6 +89,11 @@ CMD make -C "$DIR" $ARGS
 
 # post
 
+MD5(){
+    truncate -s0 "$1".md5sum
+    md5sum "$1" > "$1".md5sum
+}
+
 [ "$NOPOST" ] && exit 0
 
 T="$KERNEL_OUTPUT_DIR"
@@ -106,6 +111,8 @@ CMD cp $DIR/arch/arm64/boot/dts/rockchip/*edge*.dtb "$f"
 
 CMD cp $DIR/arch/arm64/boot/Image "$T"
 
+MD5 $T/Image
+
 #KERNEL_ADDR=0x01080000
 #KERNEL_ADDR=0x0f080000
 
@@ -115,19 +122,28 @@ mkimage=$(which mkimage 2>/dev/null)
 lzma=$(which lzma 2>/dev/null)
 
 (
-$gz  -9c $T/Image > $T/Image.gz
 
+$gz  -9c $T/Image > $T/Image.gz
+MD5 $T/Image.gz
 
 CMD $mkimage -A arm64 \
     -O linux -C gzip -T kernel -a $KERNEL_ADDR -e $KERNEL_ADDR \
     -n kernel -d "$T/Image.gz" "$T/uImage.gzip"
+
+MD5 "$T"/uImage.gzip
+
 )&
 (
 $lzma -T4 -e -9 --block-size=3M -c $T/Image > $T/Image.lzma
 
+MD5 "$T"/Image.lzma
+
 CMD $mkimage -A arm64 \
     -O linux -C lzma -T kernel -a $KERNEL_ADDR -e $KERNEL_ADDR \
     -n kernel -d "$T/Image.lzma" "$T/uImage.lzma"
+
+MD5 "$T"/uImage.lzma
+
 )&
 
 echo "[i] wait compression"
@@ -146,6 +162,7 @@ cd $T
 
 DTBS=fdt.tar.gz
 [ -f "$DTBS" ] && rm $DTBS
-tar -czf $DTBS fdt
+
+tar -czf $DTBS fdt && MD5 $DTBS
 
 ## OK BYBY
