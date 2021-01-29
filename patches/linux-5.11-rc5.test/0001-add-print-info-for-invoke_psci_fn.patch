@@ -1,0 +1,31 @@
+From ed7708ad071738022705673cde5c464cf046a57f Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 25 Jan 2021 11:42:08 +0800
+Subject: [PATCH] add print info for invoke_psci_fn
+
+Just temporary increase print info for this sub
+
+---
+ drivers/firmware/psci/psci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index 2937d44b5..ac70602fc 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -276,8 +276,12 @@ static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
+ 		 * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
+ 		 * cookie = 0 (ignored by the implementation)
+ 		 */
++		pr_info("PSCI_FN_NATIVE(1_1, SYSTEM_RESET2) reboot_mode:%d cmd:%s\n",
++			reboot_mode, cmd);
+ 		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), 0, 0, 0);
+ 	} else {
++		pr_info("PSCI_0_2_FN_SYSTEM_RESET reboot_mode:%d cmd:%s\n",
++			reboot_mode, cmd);
+ 		invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
+ 	}
+ }
+-- 
+2.25.1
+
