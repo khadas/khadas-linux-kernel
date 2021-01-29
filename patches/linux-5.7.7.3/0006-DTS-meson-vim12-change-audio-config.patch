@@ -1,0 +1,39 @@
+From b6de30ff856fa36176e32183bb6e197da5c3db48 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Wed, 27 Jan 2021 19:03:36 +0800
+Subject: [PATCH] DTS : meson : vim12 change audio config
+
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+index 9f854779f..cd9682f7b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+@@ -11,7 +11,7 @@
+ /* Common DTSI for devices which are based on the P212 reference board. */
+ 
+ #include "meson-gxl-s905x.dtsi"
+-#include "meson-gxl-audio-hdmi.dtsi"
++#include "meson-vim12-audio-hdmi-spdif.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index 05d081a2d..a21e5d1cc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -8,7 +8,7 @@
+ /dts-v1/;
+ 
+ #include "meson-gxm.dtsi"
+-#include "meson-gxl-audio-hdmi.dtsi"
++#include "meson-vim12-audio-hdmi-spdif.dtsi"
+ 
+ #include <dt-bindings/input/input.h>
+ 
+-- 
+2.25.1
+
