@@ -31,6 +31,10 @@ echo "[i] patch dir $DIR">&2
 }
 
 for p in $@; do
+    [ -e "$p" ] || {
+    echo "[w] patch $p - not found">&2
+    continue
+    }
     echo "[i] patch $p">&2
     patch -d $DIR -p1 < $p
 done
