@@ -7,7 +7,7 @@
 set -e
 cd "$(dirname "$0")"
 
-export LINUX_VER=linux-5.7.7
+#export LINUX_VER=linux-5.7.7
 
 . ./config.conf
 
