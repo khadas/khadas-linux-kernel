@@ -1,0 +1,44 @@
+From 16a8853d6831689a553b920c4912cc8b76fc16b9 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Fri, 29 Jan 2021 16:30:27 +0800
+Subject: [PATCH] arm64: dts: meson: fix broken wifi node for VIM3L
+
+move &sd_emmc_a ... from /* */ commented area, because cant load wifi fw
+without sd-uhs-sdr50 option on VIM3L
+
+[   11.686590] brcmfmac: brcmf_chip_cores_check: CPU core not detected
+[   11.696382] brcmfmac: brcmf_sdio_probe_attach: brcmf_chip_attach failed!
+[   11.706240] brcmfmac: brcmf_sdio_probe: brcmf_sdio_probe_attach failed
+[   11.715890] brcmfmac: brcmf_ops_sdio_probe: F2 error, probe failed -19...
+[   13.718424] brcmfmac: brcmf_chip_recognition: chip backplane type 15 is not supported
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+index 4b517ca72..29c785cf5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+@@ -89,13 +89,13 @@ &pcie {
+ 	status = "okay";
+ };
+ 
+-&sd_emmc_a {
+-	sd-uhs-sdr50;
+-};
+-
+ &usb {
+ 	phys = <&usb2_phy0>, <&usb2_phy1>;
+ 	phy-names = "usb2-phy0", "usb2-phy1";
+ };
+  */
+ 
++&sd_emmc_a {
++	sd-uhs-sdr50;
++};
++
+-- 
+2.25.1
+

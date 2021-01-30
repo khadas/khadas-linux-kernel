@@ -1,0 +1,52 @@
+From 5edd1653a244de7546769569910f63cec60e5f99 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Sat, 30 Jan 2021 13:29:27 +0800
+Subject: [PATCH] arm64: dts: meson-gx: remove wrong reserved BL31 memory
+
+Kernel boot fail on Khadas VIM1 VIM2 (meson GX) boards
+SOLUTION: just remove wrong mem reservation for 0x10000000 0x200000
+
+ ## Booting kernel from Legacy Image at 08080000 ...
+   Image Name:   kernel
+   Image Type:   AArch64 Linux Kernel Image (lzma compressed)
+   Data Size:    4657736 Bytes = 4.4 MiB
+   Load Address: 0f080000
+   Entry Point:  0f080000
+   Verifying Checksum ... OK
+ ## Flattened Device Tree blob at 08008000
+   Booting using the fdt blob at 0x8008000
+   Uncompressing Kernel Image
+ ERROR: reserving fdt memory region failed (addr=10000000 size=200000)
+   Loading Device Tree to 000000007bf23000, end 000000007bf2d3ce ... OK
+
+ Starting kernel ...
+
+ bl31 reboot reason: 0xd
+ bl31 reboot reason: 0x0
+ system cmd  1.
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 726b91d3a..71083b89d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -32,12 +32,6 @@ hwrom_reserved: hwrom@0 {
+ 			no-map;
+ 		};
+ 
+-		/* 2 MiB reserved for ARM Trusted Firmware (BL31) */
+-		secmon_reserved: secmon@10000000 {
+-			reg = <0x0 0x10000000 0x0 0x200000>;
+-			no-map;
+-		};
+-
+ 		/* Alternate 3 MiB reserved for ARM Trusted Firmware (BL31) */
+ 		secmon_reserved_alt: secmon@5000000 {
+ 			reg = <0x0 0x05000000 0x0 0x300000>;
+-- 
+2.25.1
+
