@@ -81,11 +81,12 @@ esac
 
 ARGS="$@"
 
-[ "$ARGS" ] || {
+#[ "$ARGS" ] || {
     ARGS="-j$(nproc)"
-}
+#}
 
 [ "$DTB_ONLY" ] && ARGS="$ARGS dtbs"
+[ "$DTB_AND_IMAGE" ] && ARGS="$ARGS dtbs Image.gz"
 
 CMD make -C "$DIR" $ARGS
 
