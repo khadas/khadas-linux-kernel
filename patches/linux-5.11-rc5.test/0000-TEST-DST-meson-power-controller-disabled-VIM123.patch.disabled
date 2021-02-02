@@ -1,0 +1,50 @@
+From dabcf065e10de03d2923addece2048285165d030 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Tue, 2 Feb 2021 16:29:58 +0800
+Subject: [PATCH] TEST: DST: meson: power-controller disabled VIM123
+
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi        | 1 +
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi         | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index ba1c6dfdc..e52e2055d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -1224,6 +1224,7 @@ clkc: clock-controller {
+ 				};
+ 
+ 				pwrc: power-controller {
++					status = "disabled";
+ 					compatible = "amlogic,meson-axg-pwrc";
+ 					#power-domain-cells = <1>;
+ 					amlogic,ao-sysctrl = <&sysctrl_AO>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 9c90d562a..abf138816 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -1641,6 +1641,7 @@ clkc: clock-controller {
+ 					};
+ 
+ 					pwrc: power-controller {
++						status = "disabled";
+ 						compatible = "amlogic,meson-g12a-pwrc";
+ 						#power-domain-cells = <1>;
+ 						amlogic,ao-sysctrl = <&rti>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 726b91d3a..3292fde80 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -550,6 +550,7 @@ sysctrl: system-controller@0 {
+ 				reg = <0 0 0 0x400>;
+ 
+ 				pwrc: power-controller {
++					status = "disabled";
+ 					compatible = "amlogic,meson-gxbb-pwrc";
+ 					#power-domain-cells = <1>;
+ 					amlogic,ao-sysctrl = <&sysctrl_AO>;
+-- 
+2.25.1
+
