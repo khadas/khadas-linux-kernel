@@ -25,6 +25,8 @@ LAST=1 ./patch_
 ./make_kernel_mainline_vimsX -n
 ./kernel_config ../files/configs/mmc_m
 ./kernel_config ../files/configs/eth2_y
+[ "$ETH_AS_MODULE" ] && \
+./kernel_config ../files/configs/eth2_m
 ./kernel_config ../files/configs/usb_storage_m
 ./kernel_config ../files/configs/small_size_y
 
