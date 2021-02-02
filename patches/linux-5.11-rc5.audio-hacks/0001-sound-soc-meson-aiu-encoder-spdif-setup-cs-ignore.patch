@@ -1,0 +1,37 @@
+From d63284cfcfba0af5f098ec01139287669491f24d Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 1 Feb 2021 17:33:17 +0800
+Subject: [PATCH] sound: soc: meson: aiu-encoder-spdif setup cs ignore
+
+---
+ sound/soc/meson/aiu-encoder-spdif.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/meson/aiu-encoder-spdif.c b/sound/soc/meson/aiu-encoder-spdif.c
+index de8509139..bff6d4268 100644
+--- a/sound/soc/meson/aiu-encoder-spdif.c
++++ b/sound/soc/meson/aiu-encoder-spdif.c
+@@ -130,7 +130,10 @@ static int aiu_encoder_spdif_hw_params(struct snd_pcm_substream *substream,
+ 	ret = aiu_encoder_spdif_setup_cs_word(component, params);
+ 	if (ret) {
+ 		dev_err(dai->dev, "failed to set channel status word\n");
+-		return ret;
++		printk("aiu-encoder-spdif %s() width %d rate %d channels %d\n", __func__,
++		       params_width(params), params_rate(params),
++		       params_channels(params));
++		//return ret;
+ 	}
+ 
+ 	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
+@@ -143,7 +146,7 @@ static int aiu_encoder_spdif_hw_params(struct snd_pcm_substream *substream,
+ 	mrate = params_rate(params) * 128 * AIU_958_INTERNAL_DIV;
+ 	ret = clk_set_rate(aiu->spdif.clks[MCLK].clk, mrate);
+ 	if (ret) {
+-		dev_err(dai->dev, "failed to set mclk rate\n");
++		dev_err(dai->dev, "failed to set mclk rate %d => %d\n", params_rate(params), mrate);
+ 		return ret;
+ 	}
+ 
+-- 
+2.25.1
+
