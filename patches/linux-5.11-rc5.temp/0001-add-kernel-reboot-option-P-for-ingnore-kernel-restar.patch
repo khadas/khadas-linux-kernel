@@ -12,11 +12,11 @@ TEMP SOLUTION:
 disable kernel restart prepare stage via add reboot=P to kernel cmd line
 
 EXAMPLE of stucked reboot #$  reboot -fn
-[   28.987453] reboot: kernel restart prapare CMD:(null)
+[   28.987453] reboot: kernel restart prepare CMD:(null)
 ... system was Freezed ...
 
 EXAMPLE next success reboot #$ reboot -fn
-[   25.997460] reboot: kernel restart prapare CMD:(null)
+[   25.997460] reboot: kernel restart prepare CMD:(null)
 [   26.041942] reboot: Restarting system
 [   26.055425] psci: PSCI_0_2_FN_SYSTEM_RESET reboot_mode:0 cmd:(null)
 bl31 reboot reason: 0xd
@@ -26,8 +26,8 @@ system cmd  1.
 
 
 EXAMPLE of stable reboot with reboot=P #$ reboot -fn
-[   25.196817] reboot: kernel restart prapare CMD:(null)
-[   25.210742] reboot: kernel restart prapare was ignored
+[   25.196817] reboot: kernel restart prepare CMD:(null)
+[   25.210742] reboot: kernel restart prepare was ignored
 [   25.224803] reboot: Restarting system
 [   25.238705] SMP: stopping secondary CPUs
 [   25.252353] psci: PSCI_0_2_FN_SYSTEM_RESET reboot_mode:0 cmd:(null)
@@ -70,9 +70,9 @@ index c4d472b7f..cb6bfebf3 100644
  
  void kernel_restart_prepare(char *cmd)
  {
-+	pr_info("kernel restart prapare CMD:%s\n", cmd);
++	pr_info("kernel restart prepare CMD:%s\n", cmd);
 +	if ( reboot_kernel_restart_prepare_disabled ) {
-+		pr_info("kernel restart prapare was ignored\n");
++		pr_info("kernel restart prepare was ignored\n");
 +		return;
 +	}
 +
@@ -84,7 +84,7 @@ index c4d472b7f..cb6bfebf3 100644
  
  		switch (*str) {
 +		case 'P':
-+			pr_info("kernel restart prapare was disabled\n");
++			pr_info("kernel restart prepare was disabled\n");
 +			reboot_kernel_restart_prepare_disabled = 1;
 +			break;
 +

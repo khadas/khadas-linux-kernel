@@ -48,7 +48,7 @@ index 50bf5d2b8..ee8aa49c6 100644
  		.of_match_table	= meson_ee_pwrc_match_table,
  	},
  };
-+__setup("ee=", ee_setup);
++__setup("meson_ee_pwrc.shutdown_disabled", ee_setup);
 +
  module_platform_driver(meson_ee_pwrc_driver);
  MODULE_LICENSE("GPL v2");
