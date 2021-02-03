@@ -1,0 +1,57 @@
+From b8572eaad0b6a3e4aaecd5629d68b677217ab2e8 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Wed, 3 Feb 2021 08:59:39 +0800
+Subject: [PATCH] HACK: driver: soc: meson-ee-pwrc ignore shutdown option
+
+---
+ drivers/soc/amlogic/meson-ee-pwrc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/soc/amlogic/meson-ee-pwrc.c b/drivers/soc/amlogic/meson-ee-pwrc.c
+index 50bf5d2b8..ee8aa49c6 100644
+--- a/drivers/soc/amlogic/meson-ee-pwrc.c
++++ b/drivers/soc/amlogic/meson-ee-pwrc.c
+@@ -46,6 +46,8 @@
+ #define HHI_NANOQ_MEM_PD_REG1		(0x47 << 2)
+ #define HHI_VPU_MEM_PD_REG2		(0x4d << 2)
+ 
++static int ignore_shutdown;
++
+ struct meson_ee_pwrc;
+ struct meson_ee_pwrc_domain;
+ 
+@@ -533,6 +535,11 @@ static void meson_ee_pwrc_shutdown(struct platform_device *pdev)
+ 	struct meson_ee_pwrc *pwrc = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	if (ignore_shutdown) {
++		dev_info(&pdev->dev, "shutdown was ignored");
++		return;
++	}
++
+ 	for (i = 0 ; i < pwrc->xlate.num_domains ; ++i) {
+ 		struct meson_ee_pwrc_domain *dom = &pwrc->domains[i];
+ 
+@@ -604,6 +611,11 @@ static const struct of_device_id meson_ee_pwrc_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, meson_ee_pwrc_match_table);
+ 
++static int __init ee_setup(char *str){
++	ignore_shutdown=1;
++	return 0;
++}
++
+ static struct platform_driver meson_ee_pwrc_driver = {
+ 	.probe = meson_ee_pwrc_probe,
+ 	.shutdown = meson_ee_pwrc_shutdown,
+@@ -612,5 +624,7 @@ static struct platform_driver meson_ee_pwrc_driver = {
+ 		.of_match_table	= meson_ee_pwrc_match_table,
+ 	},
+ };
++__setup("ee=", ee_setup);
++
+ module_platform_driver(meson_ee_pwrc_driver);
+ MODULE_LICENSE("GPL v2");
+-- 
+2.25.1
+

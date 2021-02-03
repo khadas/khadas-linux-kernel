@@ -1,0 +1,37 @@
+From 35f8c25cd3b2e052f65d17e5bea1941c917b2b89 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Tue, 2 Feb 2021 15:58:26 +0800
+Subject: [PATCH] HACK: test device_shutdown verbose
+
+---
+ drivers/base/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 6eb4c7a90..063437a16 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -4216,17 +4216,17 @@ void device_shutdown(void)
+ 		pm_runtime_barrier(dev);
+ 
+ 		if (dev->class && dev->class->shutdown_pre) {
+-			if (initcall_debug)
+ 				dev_info(dev, "shutdown_pre\n");
++				//mdelay(200);
+ 			dev->class->shutdown_pre(dev);
+ 		}
+ 		if (dev->bus && dev->bus->shutdown) {
+-			if (initcall_debug)
+ 				dev_info(dev, "shutdown\n");
++				//mdelay(200);
+ 			dev->bus->shutdown(dev);
+ 		} else if (dev->driver && dev->driver->shutdown) {
+-			if (initcall_debug)
+ 				dev_info(dev, "shutdown\n");
++				//mdelay(200);
+ 			dev->driver->shutdown(dev);
+ 		}
+ 
+-- 
+2.25.1
+
