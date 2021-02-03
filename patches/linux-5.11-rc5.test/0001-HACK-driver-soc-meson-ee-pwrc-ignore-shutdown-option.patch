@@ -3,6 +3,14 @@ From: Artem Lapkin <art@khadas.com>
 Date: Wed, 3 Feb 2021 08:59:39 +0800
 Subject: [PATCH] HACK: driver: soc: meson-ee-pwrc ignore shutdown option
 
+PROBLEM: about 1 of 10-20 reboots freezed on shutdown stage in meson_ee_pwrc driver
+
+TEMPORARY SOLUTION: use meson_ee_pwrc.shutdown_disabled kernel parameter for ignore
+meson_ee_pwrc_driver shutdown call
+
+PS: i have test VIM1 VIM2 VIM3 VIM3L all device made +1000 successful 
+reboots with meson_ee_pwrc.shutdown_disabled parameter
+
 ---
  drivers/soc/amlogic/meson-ee-pwrc.c | 14 ++++++++++++++
  1 file changed, 14 insertions(+)
