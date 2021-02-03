@@ -33,7 +33,7 @@ index 50bf5d2b8..ee8aa49c6 100644
  	int i;
  
 +	if (ignore_shutdown) {
-+		dev_info(&pdev->dev, "shutdown was ignored");
++		dev_warn(&pdev->dev, "shutdown was ignored");
 +		return;
 +	}
 +
