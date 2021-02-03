@@ -15,9 +15,9 @@ index 47a94a9a5..996ec1a61 100644
  
  static void kernel_shutdown_prepare(enum system_states state)
  {
-+	pr_info("kernel shutdown prepare\n");
++	pr_warn("kernel shutdown prepare\n");
 +	if ( reboot_kernel_restart_prepare_disabled ) {
-+		pr_info("kernel shutdown prepare was ignored\n");
++		pr_warn("kernel shutdown prepare was ignored\n");
 +		return;
 +	}
 +

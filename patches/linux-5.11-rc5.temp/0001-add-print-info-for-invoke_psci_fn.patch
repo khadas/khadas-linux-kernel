@@ -17,11 +17,11 @@ index 2937d44b5..ac70602fc 100644
  		 * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
  		 * cookie = 0 (ignored by the implementation)
  		 */
-+		pr_info("PSCI_FN_NATIVE(1_1, SYSTEM_RESET2) reboot_mode:%d cmd:%s\n",
++		pr_warn("PSCI_FN_NATIVE(1_1, SYSTEM_RESET2) reboot_mode:%d cmd:%s\n",
 +			reboot_mode, cmd);
  		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), 0, 0, 0);
  	} else {
-+		pr_info("PSCI_0_2_FN_SYSTEM_RESET reboot_mode:%d cmd:%s\n",
++		pr_warn("PSCI_0_2_FN_SYSTEM_RESET reboot_mode:%d cmd:%s\n",
 +			reboot_mode, cmd);
  		invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
  	}

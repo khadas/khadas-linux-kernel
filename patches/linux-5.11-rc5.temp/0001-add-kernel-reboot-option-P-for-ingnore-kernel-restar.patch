@@ -70,9 +70,9 @@ index c4d472b7f..cb6bfebf3 100644
  
  void kernel_restart_prepare(char *cmd)
  {
-+	pr_info("kernel restart prepare CMD:%s\n", cmd);
++	pr_warn("kernel restart prepare CMD:%s\n", cmd);
 +	if ( reboot_kernel_restart_prepare_disabled ) {
-+		pr_info("kernel restart prepare was ignored\n");
++		pr_warn("kernel restart prepare was ignored\n");
 +		return;
 +	}
 +
@@ -84,7 +84,7 @@ index c4d472b7f..cb6bfebf3 100644
  
  		switch (*str) {
 +		case 'P':
-+			pr_info("kernel restart prepare was disabled\n");
++			pr_warn("kernel restart prepare was disabled\n");
 +			reboot_kernel_restart_prepare_disabled = 1;
 +			break;
 +
