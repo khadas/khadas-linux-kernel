@@ -1,0 +1,53 @@
+From 449b5e1f47ccff13f625017fc3b37da70c64ef42 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Thu, 4 Feb 2021 13:24:21 +0800
+Subject: [PATCH] dec verbose level from err to warn for pcie
+
+---
+ drivers/base/platform.c                | 2 +-
+ drivers/pci/controller/dwc/pci-meson.c | 2 +-
+ drivers/pci/pci.c                      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 8456d8384..69961f496 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -280,7 +280,7 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ 
+ 	ret = platform_get_irq_optional(dev, num);
+ 	if (ret < 0 && ret != -EPROBE_DEFER)
+-		dev_err(&dev->dev, "IRQ index %u not found\n", num);
++		dev_warn(&dev->dev, "IRQ index %u not found\n", num);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index 686ded034..6099be72e 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -366,7 +366,7 @@ static int meson_pcie_link_up(struct dw_pcie *pci)
+ 		udelay(10);
+ 	} while (cnt < WAIT_LINKUP_TIMEOUT);
+ 
+-	dev_err(dev, "error: wait linkup timeout\n");
++	dev_warn(dev, "error: wait linkup timeout\n");
+ 	return 0;
+ }
+ 
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index b9fecc25d..32c860ba2 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4209,7 +4209,7 @@ void __iomem *devm_pci_remap_cfg_resource(struct device *dev,
+ 	BUG_ON(!dev);
+ 
+ 	if (!res || resource_type(res) != IORESOURCE_MEM) {
+-		dev_err(dev, "invalid resource\n");
++		dev_warn(dev, "invalid resource\n");
+ 		return IOMEM_ERR_PTR(-EINVAL);
+ 	}
+ 
+-- 
+2.25.1
+
