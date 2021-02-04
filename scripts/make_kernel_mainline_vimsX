@@ -66,7 +66,7 @@ DEF_CONFIG=kvims_defconfig
     CMD make -C "$DIR" $DEF_CONFIG
 }
 
-ALL=
+#ALL=
 case "$1" in
     -n*)
     echo "[i] noop mode">&2
@@ -82,13 +82,20 @@ esac
 ARGS="$@"
 
 #[ "$ARGS" ] || {
-    ARGS="-j$(nproc)"
+    ARGS="$ARGS -j$(nproc)"
 #}
 
 [ "$DTB_ONLY" ] && ARGS="$ARGS dtbs"
 [ "$DTB_AND_IMAGE" ] && ARGS="$ARGS dtbs Image.gz"
 
 CMD make -C "$DIR" $ARGS
+
+case $ARGS in
+    *modules*)
+    echo "[i] build modules complited">&2
+    exit
+    ;;
+esac
 
 # post
 
@@ -102,7 +109,6 @@ MD5(){
 T="$KERNEL_OUTPUT_DIR"
 
 [ -d "$T" ] || mkdir -p "$T"
-
 
 which rsync 2>/dev/null && rsync="rsync -av"
 [ "$rsync" ] || rsync=cp
