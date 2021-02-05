@@ -9,6 +9,21 @@ cd "$(dirname "$0")"
 
 #export LINUX_VER=linux-5.7.7
 
+DONE(){
+    s_=$?
+    COMPLITED=$(date +%s)
+    DURATION=$((COMPLITED-STARTED))
+    echo "DONE: duration $DURATION sec"
+    exit
+}
+
+STARTED=$(date +%s)
+
+#sleep 1
+#DONE
+#echo OOPS
+#exit 2
+
 . ./config.conf
 
 export KERNEL_SOURCE_DIR="$KERNEL_SOURCE_DIR"
@@ -23,26 +38,31 @@ LAST=1 ./patch_
 }
 
 ./make_kernel_mainline_vimsX -n
+
+[ "OK" ] && {
 ./kernel_config ../files/configs/mmc_m
 ./kernel_config ../files/configs/eth2_y
 [ "$ETH_AS_MODULE" ] && \
 ./kernel_config ../files/configs/eth2_m
 ./kernel_config ../files/configs/usb_storage_m
 ./kernel_config ../files/configs/small_size_y
+}
 
 NOPOST=1 ./make_kernel_mainline_vimsX dtbs || echo "[w] ups...">&2
 
 [ "$TESTONLY" ] && {
     echo "[i] OK testonly mode"
-    exit 0
+    DONE
 }
 
 ./make_kernel_mainline_vimsX
 
-[ "$DTB_ONLY" ] && exit
-[ "$DTB_AND_IMAGE" ] && exit
+[ "$DTB_ONLY" ] && DONE
+[ "$DTB_AND_IMAGE" ] && DONE
 
 [ "$NOMOD" ] || {
 TAR=1 IPK=1 ./make_kernel_mainline_vimsX_modules
 ./make_kernel_opkgs
 }
+
+DONE
