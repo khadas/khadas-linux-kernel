@@ -126,7 +126,8 @@ CMD $rsync $DIR/arch/arm64/boot/dts/rockchip/*edge*.dtb "$f"
 
 CMD gzip -c $DIR/.config > $T/config.gz
 
-CMD $rsync $DIR/arch/arm64/boot/Image "$T"
+CMD $rsync $DIR/arch/arm64/boot/Image* "$T"
+#CMD $rsync $DIR/arch/arm64/boot/Image "$T"
 MD5 $T/Image
 
 [ "$DTB_AND_IMAGE" ] && exit 0
