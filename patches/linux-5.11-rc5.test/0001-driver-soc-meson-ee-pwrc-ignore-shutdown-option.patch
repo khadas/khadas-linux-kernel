@@ -1,0 +1,81 @@
+From 18124a6d65077a454999c3b8e6129077e37a6a70 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Fri, 5 Feb 2021 15:47:43 +0800
+Subject: [PATCH] driver: soc: meson-ee-pwrc add ignore shutdown option
+
+PROBLEM: about 1 of 10-20 reboots freezed on shutdown stage in
+meson_ee_pwrc driver
+
+TEMPORARY SOLUTION: use meson_ee_pwrc.shutdown_disabled kernel parameter
+for ignore meson_ee_pwrc_driver shutdown call
+
+i have test VIM1 VIM2 VIM3 VIM3L all device done 1000+ successful reboots
+with meson_ee_pwrc.shutdown_disabled parameter
+
+Without this option about 1 of 10-20 reboots freezed and stuck.
+
+For example old my kernel 5.7.7 which use meson_ee_pwrc only for VIM3/3L
+$ linux-5.7.7/drivers/soc/amlogic$ grep .compatible meson-ee-pwrc.c
+$	.compatible = "amlogic,meson-g12a-pwrc",
+$	.compatible = "amlogic,meson-sm1-pwrc",
+dont have problem for VIM1 VIM2 and same have problem for VIM3 VIM3L
+
+kernel 5.11.rcX use it more widely and possible same problem exist
+already for all compatible using devices
+
+$linux-5.11-rc5/drivers/soc/amlogic$ grep .compatible meson-ee-pwrc.c
+$	.compatible = "amlogic,meson8-pwrc",
+$	.compatible = "amlogic,meson8b-pwrc",
+$	.compatible = "amlogic,meson8m2-pwrc",
+$	.compatible = "amlogic,meson-axg-pwrc",
+$	.compatible = "amlogic,meson-gxbb-pwrc",
+$	.compatible = "amlogic,meson-g12a-pwrc",
+$	.compatible = "amlogic,meson-sm1-pwrc",
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ drivers/soc/amlogic/meson-ee-pwrc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/soc/amlogic/meson-ee-pwrc.c b/drivers/soc/amlogic/meson-ee-pwrc.c
+index 50bf5d2b8..420f25fdf 100644
+--- a/drivers/soc/amlogic/meson-ee-pwrc.c
++++ b/drivers/soc/amlogic/meson-ee-pwrc.c
+@@ -46,6 +46,14 @@
+ #define HHI_NANOQ_MEM_PD_REG1		(0x47 << 2)
+ #define HHI_VPU_MEM_PD_REG2		(0x4d << 2)
+ 
++static int meson_ee_pwrc_ignore_shutdown;
++static int __init meson_ee_pwrc_setup(char *str)
++{
++	meson_ee_pwrc_ignore_shutdown = 1;
++	return 0;
++}
++__setup("meson_ee_pwrc.shutdown_disabled", meson_ee_pwrc_setup);
++
+ struct meson_ee_pwrc;
+ struct meson_ee_pwrc_domain;
+ 
+@@ -314,6 +322,7 @@ struct meson_ee_pwrc {
+ 	struct genpd_onecell_data xlate;
+ };
+ 
++
+ static bool pwrc_ee_get_power(struct meson_ee_pwrc_domain *pwrc_domain)
+ {
+ 	u32 reg;
+@@ -533,6 +542,11 @@ static void meson_ee_pwrc_shutdown(struct platform_device *pdev)
+ 	struct meson_ee_pwrc *pwrc = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	if (meson_ee_pwrc_ignore_shutdown) {
++		dev_warn(&pdev->dev, "shutdown was ignored");
++		return;
++	}
++
+ 	for (i = 0 ; i < pwrc->xlate.num_domains ; ++i) {
+ 		struct meson_ee_pwrc_domain *dom = &pwrc->domains[i];
+ 
+-- 
+2.25.1
+
