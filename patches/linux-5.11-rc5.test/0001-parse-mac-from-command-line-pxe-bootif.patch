@@ -3,6 +3,8 @@ From: Artem Lapkin <art@khadas.com>
 Date: Sat, 6 Feb 2021 14:59:08 +0800
 Subject: [PATCH] parse mac from command line + pxe bootif
 
+mac or BOOTIF=01-
+
 Signed-off-by: Artem Lapkin <art@khadas.com>
 ---
  .../ethernet/stmicro/stmmac/stmmac_platform.c |  44 +
@@ -45,8 +47,8 @@ index 6dc9f1041..89fad8ecc 100644
 +	g_mac_addr_setup++;
 +	return 0;
 +}
-+__setup_param("mac=", mac_addr_set0, mac_addr_set, 0);
-+__setup_param("BOOTIF=01-", mac_addr_set1, mac_addr_set, 0);
++__setup_param("BOOTIF=01-", mac_addr_set0, mac_addr_set, 0);
++__setup_param("mac=", mac_addr_set1, mac_addr_set, 0);
 +
 +#endif
 +
