@@ -1,0 +1,54 @@
+From a403a50e66beee21dee1dfb86c06dff71f97dc44 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 8 Feb 2021 11:25:38 +0800
+Subject: [PATCH] driver: net: ethernet: stmmac_platform setup mac from kernel
+ param
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ .../ethernet/stmicro/stmmac/stmmac_platform.c | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 6dc9f1041..88169a1ed 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -21,6 +21,26 @@
+ 
+ #ifdef CONFIG_OF
+ 
++static u8 kernel_param_mac[6], g_mac_addr_setup;
++
++static int __init mac_addr_set(char *line)
++{
++	u8 mac[6], i;
++	if ( strlen(line) < 17 ) return 1;
++	for (i = 0; i < 6; i++) {
++		line[2] = '\0';
++		if ( kstrtou8(line,16,&mac[i]) ) return 1;
++		line += 3;
++	}
++	memcpy(kernel_param_mac, mac, 6);
++	pr_info("eth setup mac-addr: %pM", mac);
++	g_mac_addr_setup++;
++	return 0;
++}
++__setup_param("mac=", mac_addr_set0, mac_addr_set, 0); // user custom setup
++__setup_param("BOOTIF=01-", mac_addr_set1, mac_addr_set, 0); //uboot pxe ipappend 2
++
++
+ /**
+  * dwmac1000_validate_mcast_bins - validates the number of Multicast filter bins
+  * @dev: struct device of the platform device
+@@ -406,7 +426,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
+ 	if (!plat)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	*mac = of_get_mac_address(np);
++	*mac = g_mac_addr_setup ? kernel_param_mac : of_get_mac_address(np);
+ 	if (IS_ERR(*mac)) {
+ 		if (PTR_ERR(*mac) == -EPROBE_DEFER)
+ 			return ERR_CAST(*mac);
+-- 
+2.25.1
+
