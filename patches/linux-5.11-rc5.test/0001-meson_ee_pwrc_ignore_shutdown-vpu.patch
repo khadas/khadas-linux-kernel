@@ -1,0 +1,104 @@
+From 25186ce9f05f20eb6e9e8147c73bb1d999b9c947 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Mon, 22 Feb 2021 11:15:12 +0800
+Subject: [PATCH] meson_ee_pwrc_ignore_shutdown + vpu
+
+---
+ drivers/soc/amlogic/meson-ee-pwrc.c | 37 ++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/amlogic/meson-ee-pwrc.c b/drivers/soc/amlogic/meson-ee-pwrc.c
+index 50bf5d2b8..8e2fa959d 100644
+--- a/drivers/soc/amlogic/meson-ee-pwrc.c
++++ b/drivers/soc/amlogic/meson-ee-pwrc.c
+@@ -46,6 +46,20 @@
+ #define HHI_NANOQ_MEM_PD_REG1		(0x47 << 2)
+ #define HHI_VPU_MEM_PD_REG2		(0x4d << 2)
+ 
++static int meson_ee_pwrc_ignore_shutdown;
++static int meson_ee_pwrc_ignore_shutdown_vpu;
++static int __init meson_ee_pwrc_setup(char *str)
++{
++	if (!strcmp(str,"=vpu")){
++	    meson_ee_pwrc_ignore_shutdown_vpu = 1;
++	    return 0;
++	}
++	meson_ee_pwrc_ignore_shutdown = 1;
++	return 0;
++}
++
++__setup("meson_ee_pwrc.shutdown_disabled", meson_ee_pwrc_setup);
++
+ struct meson_ee_pwrc;
+ struct meson_ee_pwrc_domain;
+ 
+@@ -314,6 +328,7 @@ struct meson_ee_pwrc {
+ 	struct genpd_onecell_data xlate;
+ };
+ 
++
+ static bool pwrc_ee_get_power(struct meson_ee_pwrc_domain *pwrc_domain)
+ {
+ 	u32 reg;
+@@ -330,12 +345,20 @@ static int meson_ee_pwrc_off(struct generic_pm_domain *domain)
+ 		container_of(domain, struct meson_ee_pwrc_domain, base);
+ 	int i;
+ 
++	if (!strcmp(domain->name, "VPU")){
++		pr_info("PWRC_OFF %s was ignored", domain->name);
++		return 0;
++	}
++	pr_info("PWRC_OFF %s prepare...", domain->name);
++//	return 0; // exit from there always without stuck
++
+ 	if (pwrc_domain->desc.top_pd)
+ 		regmap_update_bits(pwrc_domain->pwrc->regmap_ao,
+ 				   pwrc_domain->desc.top_pd->sleep_reg,
+ 				   pwrc_domain->desc.top_pd->sleep_mask,
+ 				   pwrc_domain->desc.top_pd->sleep_mask);
+ 	udelay(20);
++//	return 0; // exit from there already can stuck
+ 
+ 	for (i = 0 ; i < pwrc_domain->desc.mem_pd_count ; ++i)
+ 		regmap_update_bits(pwrc_domain->pwrc->regmap_hhi,
+@@ -351,12 +374,16 @@ static int meson_ee_pwrc_off(struct generic_pm_domain *domain)
+ 				   pwrc_domain->desc.top_pd->iso_mask,
+ 				   pwrc_domain->desc.top_pd->iso_mask);
+ 
++//      udelay(20);
++
+ 	if (pwrc_domain->num_clks) {
++		pr_info("PWRC_OFF clks %d", pwrc_domain->num_clks);
+ 		msleep(20);
+ 		clk_bulk_disable_unprepare(pwrc_domain->num_clks,
+ 					   pwrc_domain->clks);
+ 	}
+ 
++	pr_info("PWRC_OFF %s done", domain->name);
+ 	return 0;
+ }
+ 
+@@ -533,11 +560,19 @@ static void meson_ee_pwrc_shutdown(struct platform_device *pdev)
+ 	struct meson_ee_pwrc *pwrc = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	if (meson_ee_pwrc_ignore_shutdown) {
++		dev_warn(&pdev->dev, "shutdown was ignored");
++		return;
++	}
++
++	dev_info(&pdev->dev, "shutdown begin");
+ 	for (i = 0 ; i < pwrc->xlate.num_domains ; ++i) {
+ 		struct meson_ee_pwrc_domain *dom = &pwrc->domains[i];
+ 
+-		if (dom->desc.get_power && !dom->desc.get_power(dom))
++		if (dom->desc.get_power && !dom->desc.get_power(dom)) {
++			dev_info(&pdev->dev, "shutdown domain %d:%s...", i, dom->desc.name);
+ 			meson_ee_pwrc_off(&dom->base);
++		}
+ 	}
+ }
+ 
+-- 
+2.25.1
+
