@@ -82,11 +82,18 @@ esac
 ARGS="$@"
 
 #[ "$ARGS" ] || {
+case $ARGS in
+    *-j*)
+    ;;
+    *)
     ARGS="$ARGS -j$(nproc)"
+    ;;
+esac
 #}
 
 [ "$DTB_ONLY" ] && ARGS="$ARGS dtbs"
 [ "$DTB_AND_IMAGE" ] && ARGS="$ARGS dtbs Image.gz"
+[ "$IMAGE_ONLY" ] && ARGS="$ARGS Image.gz"
 
 CMD make -C "$DIR" $ARGS
 
@@ -124,13 +131,15 @@ CMD $rsync $DIR/arch/arm64/boot/dts/rockchip/*edge*.dtb "$f"
 
 [ "$DTB_ONLY" ] && exit 0
 
-CMD gzip -c $DIR/.config > $T/config.gz
+CMD $rsync $DIR/kernel/config_data.gz $T/config.gz
+#CMD gzip -c $DIR/.config > $T/config.gz
 
 CMD $rsync $DIR/arch/arm64/boot/Image* "$T"
 #CMD $rsync $DIR/arch/arm64/boot/Image "$T"
 MD5 $T/Image
 
 [ "$DTB_AND_IMAGE" ] && exit 0
+[ "$IMAGE_ONLY" ] && exit 0
 
 #KERNEL_ADDR=0x01080000
 #KERNEL_ADDR=0x0f080000
