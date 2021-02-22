@@ -44,7 +44,7 @@ index 50bf5d2b8..8e2fa959d 100644
  		container_of(domain, struct meson_ee_pwrc_domain, base);
  	int i;
  
-+	if (!strcmp(domain->name, "VPU")){
++	if (meson_ee_pwrc_ignore_shutdown_vpu && !strcmp(domain->name, "VPU")){
 +		pr_info("PWRC_OFF %s was ignored", domain->name);
 +		return 0;
 +	}
