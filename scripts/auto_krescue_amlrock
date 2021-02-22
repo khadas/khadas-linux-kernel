@@ -31,8 +31,8 @@ export KERNEL_SOURCE_DIR="$KERNEL_SOURCE_DIR"
 ./$kernel_prepare
 
 CHK=1 ./patch_ || {
-#./patch_ ../patches/$LINUX_VER/*.patch 
-./patch_ ../patches/$LINUX_VER*/*.patch 
+#./patch_ ../patches/$LINUX_VER/*.patch
+./patch_ ../patches/$LINUX_VER*/*.patch
 ./patch_ ../patches/linux-krescue/*.patch
 LAST=1 ./patch_
 }
@@ -41,6 +41,8 @@ LAST=1 ./patch_
 
 [ "OK" ] && {
 ./kernel_config ../files/configs/mmc_m
+[ "$DRM_NO" ] && \
+./kernel_config ../files/configs/drm_n
 ./kernel_config ../files/configs/eth2_y
 [ "$ETH_AS_MODULE" ] && \
 ./kernel_config ../files/configs/eth2_m
