@@ -152,6 +152,9 @@ lzma=$(which lzma 2>/dev/null)
 (
 
 $gz  -9c $T/Image > $T/Image.gz
+# max gzip repack !!!
+#advdef -z -4 $T/Image.gz
+
 MD5 $T/Image.gz
 
 CMD $mkimage -A arm64 \
