@@ -3,6 +3,8 @@ From: Artem Lapkin <art@khadas.com>
 Date: Mon, 22 Feb 2021 11:15:12 +0800
 Subject: [PATCH] meson_ee_pwrc_ignore_shutdown + vpu
 
+Signed-off-by: Artem Lapkin <art@khadas.com>
+
 ---
  drivers/soc/amlogic/meson-ee-pwrc.c | 37 ++++++++++++++++++++++++++++-
  1 file changed, 36 insertions(+), 1 deletion(-)
