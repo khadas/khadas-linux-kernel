@@ -1,0 +1,63 @@
+From c88ff5937b220c518a31be3737b49cef43f37c61 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Tue, 2 Mar 2021 14:39:38 +0800
+Subject: [PATCH] reboot: add shutdown option sysfs
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ kernel/reboot.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index b88e82409..fc097f2de 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -46,6 +46,7 @@ int reboot_cpu;
+ enum reboot_type reboot_type = BOOT_ACPI;
+ int reboot_force;
+ int reboot_kernel_restart_prepare_disabled;
++int reboot_shutdown = 1;
+ 
+ /*
+  * If set, this is used for preparing the system to power off.
+@@ -796,6 +797,29 @@ static ssize_t cpu_store(struct kobject *kobj, struct kobj_attribute *attr,
+ static struct kobj_attribute reboot_cpu_attr = __ATTR_RW(cpu);
+ #endif
+ 
++static ssize_t shutdown_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
++{
++	return sprintf(buf, "%d\n", reboot_shutdown);
++}
++static ssize_t shutdown_store(struct kobject *kobj, struct kobj_attribute *attr,
++			  const char *buf, size_t count)
++{
++	bool res;
++
++	if (!capable(CAP_SYS_BOOT))
++		return -EPERM;
++
++	if (kstrtobool(buf, &res))
++		return -EINVAL;
++
++	reboot_shutdown = res;
++	reboot_kernel_restart_prepare_disabled = !res;
++
++	return count;
++}
++
++static struct kobj_attribute reboot_shutdown_attr = __ATTR_RW(shutdown);
++
+ static struct attribute *reboot_attrs[] = {
+ 	&reboot_mode_attr.attr,
+ #ifdef CONFIG_X86
+@@ -805,6 +829,7 @@ static struct attribute *reboot_attrs[] = {
+ #ifdef CONFIG_SMP
+ 	&reboot_cpu_attr.attr,
+ #endif
++	&reboot_shutdown_attr.attr,
+ 	NULL,
+ };
+ 
+-- 
+2.25.1
+
