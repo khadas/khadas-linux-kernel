@@ -58,6 +58,8 @@ rm build source
 
 CMD find -name \*.ko > modules.list
 
+echo "!!BEGIN"
+
 while read m ; do
     k=$(basename $m)
     n=${m#./}
@@ -67,6 +69,8 @@ while read m ; do
     ln -sf $l $m
 
 done < modules.list
+
+echo "!!DONE"
 
 cd $PWD
 
