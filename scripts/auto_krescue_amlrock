@@ -43,6 +43,8 @@ LAST=1 ./patch_
 ./kernel_config ../files/configs/mmc_m
 [ "$DRM_NO" ] && \
 ./kernel_config ../files/configs/drm_n
+[ "$DRM_MODULE" ] && \
+./kernel_config ../files/configs/drm_m
 ./kernel_config ../files/configs/eth2_y
 [ "$ETH_AS_MODULE" ] && \
 ./kernel_config ../files/configs/eth2_m
