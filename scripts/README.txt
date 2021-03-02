@@ -24,6 +24,11 @@
     ./kernel_config DRM_MESON=m
     ./kernel_config CONFIG_DRM_MESON=m
 
+    ./kernel_config DRM_MESON=m DRM=m MEDIA_CEC_RC=n
+
     cat ../files/configs/drm_m
     DRM_MESON=m
 
+# build only modules
+
+    ./make_kernel_mainline_vimsX modules
