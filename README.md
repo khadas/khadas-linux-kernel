@@ -10,7 +10,7 @@ https://github.com/khadas/khadas-linux-kernel
 
 ## Features
 
-+ kernel version is 5.7.7 + patches
++ kernel version is 5.11.1 + patches
 + one kernel for amlogic and rockchip
 + mainline 
 + small kernel size
@@ -40,7 +40,7 @@ https://github.com/khadas/khadas-linux-kernel
     ./make_kernel_mainline_vimsX_modules
 
     # we can define kernel version
-    export LINUX_VER=linux-5.7.7
+    export LINUX_VER=linux-5.11.1
     ./make_kernel_mainline_vimsX
 
     # build modules archive
