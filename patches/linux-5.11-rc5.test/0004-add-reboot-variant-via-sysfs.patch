@@ -1,0 +1,63 @@
+From 8e9d9cebe860676440806b0a9a289287e7c8ff75 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Wed, 3 Mar 2021 12:55:00 +0800
+Subject: [PATCH] add reboot variant via sysfs
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ kernel/reboot.c | 33 +++++++++++++++++++++++++++++++++
+
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index fc097f2de..8baf5231f 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -820,6 +820,38 @@ static ssize_t shutdown_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 
+ static struct kobj_attribute reboot_shutdown_attr = __ATTR_RW(shutdown);
+ 
++/*
++# cat /sys/kernel/reboot/do 
++reboot | reboot_without_shutdown
++echo reboot > /sys/kernel/reboot/do
++echo reboot_without_shutdown > /sys/kernel/reboot/do
++*/
++
++#define DO_REBOOT			"reboot"
++#define DO_REBOOT_WITHOUT_SHUTDOWN	"reboot_without_shutdown"
++
++static ssize_t do_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
++{
++	return sprintf(buf, "%s | %s\n", DO_REBOOT, DO_REBOOT_WITHOUT_SHUTDOWN );
++}
++static ssize_t do_store(struct kobject *kobj, struct kobj_attribute *attr,
++			  const char *buf, size_t count)
++{
++	if (!capable(CAP_SYS_BOOT))
++		return -EPERM;
++
++	if (!strncmp(buf, DO_REBOOT_WITHOUT_SHUTDOWN, strlen(DO_REBOOT_WITHOUT_SHUTDOWN))) {
++		//reboot_kernel_restart_prepare_disabled = 1;
++		//kernel_restart(NULL);
++		machine_restart(NULL);
++	} else if (!strncmp(buf, DO_REBOOT, strlen(DO_REBOOT)))
++		kernel_restart(NULL);
++
++	return -EINVAL;
++}
++
++static struct kobj_attribute reboot_do_attr = __ATTR_RW(do);
++
+ static struct attribute *reboot_attrs[] = {
+ 	&reboot_mode_attr.attr,
+ #ifdef CONFIG_X86
+@@ -830,6 +862,7 @@ static struct attribute *reboot_attrs[] = {
+ 	&reboot_cpu_attr.attr,
+ #endif
+ 	&reboot_shutdown_attr.attr,
++	&reboot_do_attr.attr,
+ 	NULL,
+ };
+ 
+-- 
+2.25.1
+
