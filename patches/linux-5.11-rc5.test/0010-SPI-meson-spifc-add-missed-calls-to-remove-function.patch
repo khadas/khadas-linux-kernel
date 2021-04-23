@@ -1,0 +1,38 @@
+From f581c280715b07ba40dd61b1ee8f7adee60f720d Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Fri, 23 Apr 2021 11:10:49 +0800
+Subject: [PATCH] SPI: meson-spifc add missed calls to remove function
+
+Problem: rmmod meson_gx_mmc - not stable without spi_master_suspend call
+and we can get stuck when try unload this module
+
+rmmod meson_gx_mmc
+...
+[  421.108614] Deleting MTD partitions on "spi0.0":
+[  424.219862] spi_master spi0: Failed to power device: -13
+...
+lsmod | grep spi
+spi_meson_spifc        16384 -1
+
+Solution: just add spi_master_suspend(master) call
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ drivers/spi/spi-meson-spifc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/spi/spi-meson-spifc.c b/drivers/spi/spi-meson-spifc.c
+index 8eca6f24c..8a97a6dbf 100644
+--- a/drivers/spi/spi-meson-spifc.c
++++ b/drivers/spi/spi-meson-spifc.c
+@@ -359,6 +359,7 @@ static int meson_spifc_remove(struct platform_device *pdev)
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct meson_spifc *spifc = spi_master_get_devdata(master);
+ 
++	spi_master_suspend(master);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 	clk_disable_unprepare(spifc->clk);
+ 	pm_runtime_disable(&pdev->dev);
+-- 
+2.25.1
+
