@@ -1,0 +1,7 @@
+#!/bin/sh
+
+## hyphop ##
+#= repack gzip with maximal compression
+
+advdef -z -4 "$1"
+
