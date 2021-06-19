@@ -1,0 +1,42 @@
+From e8ef5929616ef871564a104fd5da2b7c04d404d2 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Sat, 19 Jun 2021 12:39:25 +0800
+Subject: [PATCH 1/4] PCI: move Keystone and Loongson device IDs to pci_ids
+
+Moved from
+* drivers/pci/controller/dwc/pci-keystone.c
+* drivers/pci/controller/pci-loongson.c
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ include/linux/pci_ids.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index d8156a5db..b05b307e4 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -150,6 +150,9 @@
+ /* Vendors and devices.  Sort key: vendor first, device next. */
+ 
+ #define PCI_VENDOR_ID_LOONGSON		0x0014
++#define PCI_DEVICE_ID_LOONGSON_PCIE_PORT_0	0x7a09
++#define PCI_DEVICE_ID_LOONGSON_PCIE_PORT_1	0x7a19
++#define PCI_DEVICE_ID_LOONGSON_PCIE_PORT_2	0x7a29
+ 
+ #define PCI_VENDOR_ID_TTTECH		0x0357
+ #define PCI_DEVICE_ID_TTTECH_MC322	0x000a
+@@ -883,6 +886,10 @@
+ #define PCI_DEVICE_ID_TI_XX20_FM	0xac8f
+ #define PCI_DEVICE_ID_TI_DRA74x		0xb500
+ #define PCI_DEVICE_ID_TI_DRA72x		0xb501
++#define PCI_DEVICE_ID_TI_RC_K2HK	0xb008
++#define PCI_DEVICE_ID_TI_RC_K2E		0xb009
++#define PCI_DEVICE_ID_TI_RC_K2L		0xb00a
++#define PCI_DEVICE_ID_TI_RC_K2G		0xb00b
+ 
+ #define PCI_VENDOR_ID_SONY		0x104d
+ 
+-- 
+2.25.1
+
