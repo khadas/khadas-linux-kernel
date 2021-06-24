@@ -1,0 +1,27 @@
+From 031635f936dc7e678f344be0cff10a7f30380630 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Wed, 23 Jun 2021 10:11:55 +0800
+Subject: [PATCH 4/5] watchdog: meson_gxbb_wdt: add stop_on_unregister
+
+Added missed watchdog_stop_on_unregister call
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ drivers/watchdog/meson_gxbb_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
+index 0bf5dccf70b1..2dbe254e5122 100644
+--- a/drivers/watchdog/meson_gxbb_wdt.c
++++ b/drivers/watchdog/meson_gxbb_wdt.c
+@@ -196,6 +196,7 @@ static int meson_gxbb_wdt_probe(struct platform_device *pdev)
+ 
+ 	meson_gxbb_wdt_set_timeout(&data->wdt_dev, data->wdt_dev.timeout);
+ 	watchdog_set_nowayout(&data->wdt_dev, nowayout);
++	watchdog_stop_on_unregister(&data->wdt_dev);
+ 
+ 	return devm_watchdog_register_device(dev, &data->wdt_dev);
+ }
+-- 
+2.25.1
+

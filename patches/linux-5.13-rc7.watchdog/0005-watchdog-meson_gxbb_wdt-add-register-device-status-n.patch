@@ -1,0 +1,36 @@
+From ebb99439fb27df6ebd033111aef8d92faa41d2d3 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Wed, 23 Jun 2021 10:19:24 +0800
+Subject: [PATCH 5/5] watchdog: meson_gxbb_wdt: add register device status
+ notification
+
+Print watchdog success driver start status notification
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ drivers/watchdog/meson_gxbb_wdt.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
+index 2dbe254e5122..750b304b460d 100644
+--- a/drivers/watchdog/meson_gxbb_wdt.c
++++ b/drivers/watchdog/meson_gxbb_wdt.c
+@@ -198,7 +198,14 @@ static int meson_gxbb_wdt_probe(struct platform_device *pdev)
+ 	watchdog_set_nowayout(&data->wdt_dev, nowayout);
+ 	watchdog_stop_on_unregister(&data->wdt_dev);
+ 
+-	return devm_watchdog_register_device(dev, &data->wdt_dev);
++	ret = devm_watchdog_register_device(dev, &data->wdt_dev);
++	if (ret)
++		return ret;
++
++	dev_info(dev, "Watchdog enabled (timeout=%d sec, nowayout=%d)",
++		 data->wdt_dev.timeout, nowayout);
++
++	return ret;
+ }
+ 
+ static struct platform_driver meson_gxbb_wdt_driver = {
+-- 
+2.25.1
+
