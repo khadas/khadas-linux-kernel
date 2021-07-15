@@ -10,7 +10,7 @@ https://github.com/khadas/khadas-linux-kernel
 
 ## Features
 
-+ kernel version is 5.7.7 + patches
++ kernel version is 5.13.x + patches
 + one kernel for amlogic and rockchip
 + mainline 
 + small kernel size
