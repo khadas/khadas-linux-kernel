@@ -1,11 +1,26 @@
 From b23c8fb3421984a72578a4235746653dcd2e82b7 Mon Sep 17 00:00:00 2001
 From: Artem Lapkin <art@khadas.com>
 Date: Tue, 13 Jul 2021 10:46:41 +0800
-Subject: [PATCH] PCI: DWC: meson: add meson_mrrs_limit_quirk
+Subject: [PATCH v2] PCI: DWC: meson: add 256 bytes MRRS quirk
 
 256 bytes maximum read request size. They can't handle
 anything larger than this. So force this limit on
 any devices attached under these ports.
+
+Come-from: https://lkml.org/lkml/2021/6/18/160
+Come-from: https://lkml.org/lkml/2021/6/19/19
+
+It only affects PCIe in P2P, in non-P2P is will certainly affect
+transfers on the internal SoC/Processor/Chip internal bus/fabric.
+
+These quirks are currently implemented in the
+controller driver and only applies when the controller has been probed
+and to each endpoint detected on this particular controller.
+
+Continue having separate quirks for each controller if the core
+isn't the right place to handle MPS/MRRS.
+
+>> Neil
 
 Signed-off-by: Artem Lapkin <art@khadas.com>
 ---
@@ -36,7 +51,7 @@ index 686ded034..1498950de 100644
 +		 * anything larger than this. So force this limit on
 +		 * any devices attached under these ports.
 +		 */
-+		if (!pci_match_id(bridge_devids, bus->self)){
++		if (!pci_match_id(bridge_devids, bus->self)) {
 +			bus = bus->parent;
 +			continue;
 +		}
