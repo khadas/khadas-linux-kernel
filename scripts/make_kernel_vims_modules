@@ -58,17 +58,19 @@ rm build source
 
 CMD find -name \*.ko > modules.list
 
-echo "!!BEGIN"
+echo "!!REORDER BEGIN"
 
-while read m ; do
-    k=$(basename $m)
-    n=${m#./}
-    l=$(perl -e "\$_='$n'; s/\\w+\//..\//g; print \$_")
+#while read m ; do
+#    k=$(basename $m)
+#    n=${m#./}
+#    l=$(perl -e "\$_='$n'; s/\\w+\//..\//g; print \$_")
 #    echo "[i] $k - $n - $l"
-    mv $n .
-    ln -sf $l $m
+#    mv $n .
+#    ln -sf $l $m
+#
+#done < modules.list
 
-done < modules.list
+$D/modules_order.pl < modules.list
 
 echo "!!DONE"
 
