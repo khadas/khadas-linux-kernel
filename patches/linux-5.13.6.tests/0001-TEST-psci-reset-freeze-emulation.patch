@@ -1,0 +1,46 @@
+From 1bbfad7ec6702181ea5805dfb68d41bd31d41827 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Thu, 29 Jul 2021 11:21:40 +0800
+Subject: [PATCH] TEST: psci reset freeze emulation
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ drivers/firmware/psci/psci.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index 3c1c5daf6..cb465e0ce 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -40,6 +40,15 @@
+ #define PSCI_FN_NATIVE(version, name)	PSCI_##version##_FN_##name
+ #endif
+ 
++static int psci_freeze;
++static int __init psci_freeze_setup(char *str)
++{
++	psci_freeze = 1;
++	pr_warn("psci_reboot_freeze: activated\n");
++	return 0;
++}
++__setup("psci.reboot.freeze", psci_freeze_setup);
++
+ /*
+  * The CPU any Trusted OS is resident on. The trusted OS may reject CPU_OFF
+  * calls to its resident CPU, so we must avoid issuing those. We never migrate
+@@ -298,6 +307,12 @@ static int get_set_conduit_method(struct device_node *np)
+ 
+ static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
+ {
++	if (psci_freeze) {
++	    pr_warn("%s: freeze emulation\n", __func__);
++	    while (1) {
++		;
++	    }
++	}
+ 	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+ 	    psci_system_reset2_supported) {
+ 		/*
+-- 
+2.25.1
+
