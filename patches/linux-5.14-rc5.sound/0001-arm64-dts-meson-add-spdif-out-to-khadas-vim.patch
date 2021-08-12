@@ -3,7 +3,7 @@ From: Artem Lapkin <art@khadas.com>
 Date: Tue, 10 Aug 2021 12:08:44 +0800
 Subject: [PATCH 1/2] arm64: dts: meson: add spdif out to khadas-vim
 
-Add spdif output audio support to khadas-vim
+Add spdif and i2s output audio support to khadas-vim
 
 Signed-off-by: Artem Lapkin <art@khadas.com>
 ---
