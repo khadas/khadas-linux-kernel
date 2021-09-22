@@ -14,7 +14,9 @@ mount -t configfs none /sys/kernel/config
 mkdir /sys/kernel/config/device-tree/overlays/test
 dtc -@ test.dts test.dtbo
 # load
-cat test.dtbo > /sys/kernel//config/device-tree/overlays/test/dtbo
+cat test.dtbo > /sys/kernel/config/device-tree/overlays/test/dtbo
+# load
+dtc test.dts > /sys/kernel/config/device-tree/overlays/test/dtbo
 # enable
 echo 1 > /sys/kernel/config/device-tree/overlays/test/status
 # check
