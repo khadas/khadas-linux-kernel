@@ -1,0 +1,111 @@
+From 707dd2fee1c47d26ba21d63605c534c47d1d9928 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Fri, 5 Nov 2021 13:12:26 +0800
+Subject: [PATCH] mmc: core: select_timing improve mmc_select_hs400es
+
+Problem: mmc_select_timing trying only one configuration. If timing
+configuration was failed we going with error.
+
+Example: emmc configured as mmc-hs400-1_8v mmc-hs400-enhanced-strobe and
+have problem with mmc-hs400-enhanced-strobe mode
+
+[    5.772129] mmc2: CQHCI version 5.10
+[    5.796548] mmc2: SDHCI controller on fe330000.mmc [fe330000.mmc] using ADMA
+[    5.861371] mmc2: mmc_select_hs400es failed, error -110
+[    5.862289] mmc2: error -110 whilst initialising MMC card
+[    5.953189] mmc2: mmc_select_hs400es failed, error -110
+[    5.954103] mmc2: error -110 whilst initialising MMC card
+[    6.059823] mmc2: mmc_select_hs400es failed, error -110
+[    6.060756] mmc2: error -110 whilst initialising MMC card
+[    6.225465] mmc2: mmc_select_hs400es failed, error -110
+[    6.226361] mmc2: error -110 whilst initialising MMC card
+
+New mmc_select_timing logic trying suitable timing configs step by step
+until get 1st success
+
+. mmc_select_hs400es > mmc_select_hs200 > mmc_select_hs
+
+Example: same emmc works well just mmc_select_hs400es fails ignored
+
+[    5.784994] mmc2: CQHCI version 5.10
+[    5.811089] mmc2: SDHCI controller on fe330000.mmc [fe330000.mmc] using ADMA
+[    5.879189] mmc2: mmc_select_hs400es failed, error -84
+[    5.887989] mmc2: Command Queue Engine enabled
+[    5.888022] mmc2: new HS400 MMC card at address 0001
+[    5.888905] mmcblk2: mmc2:0001 BJTD4R 29.1 GiB 
+[    5.889131] mmcblk2boot0: mmc2:0001 BJTD4R 4.00 MiB 
+[    5.889356] mmcblk2boot1: mmc2:0001 BJTD4R 4.00 MiB 
+[    5.889612] mmcblk2rpmb: mmc2:0001 BJTD4R 4.00 MiB, chardev (242:0)
+
+ dd if=/dev/mmcblk2 of=/dev/null bs=1M seek=10000 count=1000
+ 1048576000 bytes (1.0 GB, 1000 MiB) copied, 4.69745 s, 223 MB/s
+
+Example: other emmc works well with same configuration (and same time
+works without this patch)
+
+[    5.796294] mmc2: CQHCI version 5.10
+[    5.822245] mmc2: SDHCI controller on fe330000.mmc [fe330000.mmc] using ADMA
+[    5.916896] mmc2: Command Queue Engine enabled
+[    5.916929] mmc2: new HS400 Enhanced strobe MMC card at address 0001
+[    5.917802] mmcblk2: mmc2:0001 DUTA42 116 GiB 
+[    5.918029] mmcblk2boot0: mmc2:0001 DUTA42 4.00 MiB 
+[    5.918264] mmcblk2boot1: mmc2:0001 DUTA42 4.00 MiB 
+[    5.918500] mmcblk2rpmb: mmc2:0001 DUTA42 16.0 MiB, chardev (242:0)
+
+ dd if=/dev/mmcblk2 of=/dev/null bs=1M seek=10000 count=1000
+ 1048576000 bytes (1.0 GB, 1000 MiB) copied, 4.69629 s, 223 MB/s
+
+Tested on different Khadas Edge (rk3399) boards with different emmc chips.
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ drivers/mmc/core/mmc.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 838726b68..5e7e85223 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1342,9 +1342,13 @@ static void mmc_select_driver_type(struct mmc_card *card)
+ static int mmc_select_hs400es(struct mmc_card *card)
+ {
+ 	struct mmc_host *host = card->host;
++	unsigned int old_timing, old_signal_voltage;
+ 	int err = -EINVAL;
+ 	u8 val;
+ 
++	old_signal_voltage = host->ios.signal_voltage;
++	old_timing = host->ios.timing;
++
+ 	if (!(host->caps & MMC_CAP_8_BIT_DATA)) {
+ 		err = -ENOTSUPP;
+ 		goto out_err;
+@@ -1430,6 +1434,11 @@ static int mmc_select_hs400es(struct mmc_card *card)
+ out_err:
+ 	pr_err("%s: %s failed, error %d\n", mmc_hostname(card->host),
+ 	       __func__, err);
++	host->ios.enhanced_strobe = false;
++	mmc_set_timing(host, old_timing);
++	if (mmc_set_signal_voltage(host, old_signal_voltage))
++		err = -EIO;
++
+ 	return err;
+ }
+ 
+@@ -1515,9 +1524,11 @@ static int mmc_select_timing(struct mmc_card *card)
+ 
+ 	if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400ES)
+ 		err = mmc_select_hs400es(card);
+-	else if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200)
++
++	if (err && card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200)
+ 		err = mmc_select_hs200(card);
+-	else if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS)
++
++	if (err && card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS)
+ 		err = mmc_select_hs(card);
+ 
+ 	if (err && err != -EBADMSG)
+-- 
+2.25.1
+
