@@ -1,0 +1,55 @@
+From 2bbc609495c61eb1c8793a0124e3a793a0116568 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Sun, 31 Oct 2021 16:18:45 +0800
+Subject: [PATCH] rk3399-khadas-edge.dtsi: sdhci disable mmc-hs400-enhanced-strobe
+
+NOTE: not confirmed !!! testing wait
+
+Example: emmc mmc_select_hs400es fails
+
+[    5.772129] mmc2: CQHCI version 5.10
+[    5.796548] mmc2: SDHCI controller on fe330000.mmc [fe330000.mmc] using ADMA
+[    5.861371] mmc2: mmc_select_hs400es failed, error -110
+[    5.862289] mmc2: error -110 whilst initialising MMC card
+[    5.953189] mmc2: mmc_select_hs400es failed, error -110
+[    5.954103] mmc2: error -110 whilst initialising MMC card
+[    6.059823] mmc2: mmc_select_hs400es failed, error -110
+[    6.060756] mmc2: error -110 whilst initialising MMC card
+[    6.225465] mmc2: mmc_select_hs400es failed, error -110
+[    6.226361] mmc2: error -110 whilst initialising MMC card
+
+Example: same emmc works well just mmc_select_hs400es disabled
+
+[    5.784994] mmc2: CQHCI version 5.10
+[    5.811089] mmc2: SDHCI controller on fe330000.mmc [fe330000.mmc] using ADMA
+[    5.879189] mmc2: mmc_select_hs400es failed, error -84
+[    5.887989] mmc2: Command Queue Engine enabled
+[    5.888022] mmc2: new HS400 MMC card at address 0001
+[    5.888905] mmcblk2: mmc2:0001 BJTD4R 29.1 GiB 
+[    5.889131] mmcblk2boot0: mmc2:0001 BJTD4R 4.00 MiB 
+[    5.889356] mmcblk2boot1: mmc2:0001 BJTD4R 4.00 MiB 
+[    5.889612] mmcblk2rpmb: mmc2:0001 BJTD4R 4.00 MiB, chardev (242:0)
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+index d5c7648c8..adfb1f9b5 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+@@ -704,8 +704,8 @@ &sdmmc {
+ 
+ &sdhci {
+ 	bus-width = <8>;
+-	mmc-hs400-1_8v;
+-	mmc-hs400-enhanced-strobe;
++	mmc-hs400-1_8v; /* es unusable and fail for BJTD4R chips */
++//	mmc-hs400-enhanced-strobe;
+ 	non-removable;
+ 	status = "okay";
+ };
+-- 
+2.25.1
+
