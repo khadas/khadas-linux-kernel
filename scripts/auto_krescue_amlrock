@@ -50,6 +50,9 @@ LAST=1 ./patch_
 ./kernel_config ../files/configs/eth2_m
 ./kernel_config ../files/configs/usb_storage_m
 ./kernel_config ../files/configs/small_size_y
+
+./kernel_config ../files/configs/spi_mmc
+
 }
 
 NOPOST=1 ./make_kernel_mainline_vimsX dtbs || echo "[w] ups...">&2
