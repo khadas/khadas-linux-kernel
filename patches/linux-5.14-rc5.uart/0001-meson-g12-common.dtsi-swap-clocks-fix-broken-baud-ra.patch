@@ -1,0 +1,35 @@
+From b005f872512407ae7f002955bee7e1e8df2f2c90 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <art@khadas.com>
+Date: Thu, 23 Feb 2023 02:26:00 +0800
+Subject: [PATCH] meson-g12-common.dtsi: swap clocks fix broken baud rates
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 00c6f5329..62158ed8f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -2051,7 +2051,7 @@ uart_AO: serial@3000 {
+ 				reg = <0x0 0x3000 0x0 0x18>;
+ 				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+ 				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART>, <&xtal>;
+-				clock-names = "xtal", "pclk", "baud";
++				clock-names = "xtal", "baud", "pclk";
+ 				status = "disabled";
+ 			};
+ 
+@@ -2297,7 +2297,7 @@ uart_C: serial@22000 {
+ 				reg = <0x0 0x22000 0x0 0x18>;
+ 				interrupts = <GIC_SPI 93 IRQ_TYPE_EDGE_RISING>;
+ 				clocks = <&xtal>, <&clkc CLKID_UART2>, <&xtal>;
+-				clock-names = "xtal", "pclk", "baud";
++				clock-names = "xtal", "baud", "pclk";
+ 				status = "disabled";
+ 			};
+ 
+-- 
+2.25.1
+
